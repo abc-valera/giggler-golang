@@ -1,0 +1,11 @@
+!.gitkeep
+
+# Env files
+*.env
+!.example.env
+
+# Local infrastructure files
+local/*
+
+# Node dependencies
+node_modules

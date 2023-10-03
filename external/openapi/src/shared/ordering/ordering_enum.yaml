@@ -1,0 +1,5 @@
+type: string
+name: ordering
+enum:
+  - asc
+  - desc

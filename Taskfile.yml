@@ -1,0 +1,52 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  build:dockerimage:
+    cmd: docker build -t giggler-golang -f ./config/dockerfile .
+
+  start:dev:
+    dotenv: ["env/dev.env"]
+    cmd: go tool air -c ./config/air.toml
+
+  start:dev:dockerimage:
+    cmd: docker run
+      --env-file ./env/dev.env
+      -p 3000:3000
+      --rm -it giggler-golang
+
+  openapi:lint:
+    cmd: npx redocly lint ./src/openapi.yaml
+
+  openapi:generate:bundle:
+    cmd: npx redocly bundle
+      -o ./external/openapi/bundle.yaml
+      ./external/openapi/src/openapi.yaml
+
+  openapi:serve-docs:
+    env:
+      OPENAPI_DOCS_PORT: 3001
+    cmd: go run ./external/openapi/docs.go
+
+  sqlite:init:
+    env:
+      SQLITE_PATH: ./local/db.sqlite3
+    cmd: go run ./external/sqlite/migrate.go
+
+  gorm:generate:
+    env:
+      SQLITE_PATH: ./local/db.sqlite3
+    cmd: go run ./src/components/gormgen/generate.go
+
+  k6:generate:
+    cmd: npx openapi-to-k6 -v --include-sample-script ./external/openapi/bundle.yaml test/
+
+  view:generate:
+    cmd: go tool ogen
+      --package view
+      --target ./src/components/viewgen
+      --clean ./external/openapi/bundle.yaml
+
+  local:clear:
+    cmd: rm -r ./local/*
