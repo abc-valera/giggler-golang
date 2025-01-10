@@ -1,0 +1,12 @@
+description: General Error
+content:
+  application/json:
+    schema:
+      type: object
+      title: CodeError
+      properties:
+        error_message:
+          type: string
+          example: Internal error occurred
+      required:
+        - error_message

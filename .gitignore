@@ -1,23 +1,11 @@
-# Node dependencies
-node_modules
-package-lock.json
-package.json
-
-# Binaries
-bin/
-
-# Temporary files
-tmp/
-
 # Env files
 *.env
+!.example.env
 !.example.*.env
 
 # Local infrastructure files
-infra/local/*
-!infra/local/.gitkeep
+var/*
+!var/.gitkeep
 
-# Terraform files
-infra/terraform/.terraform
-infra/terraform/terraform.tfstate
-infra/terraform/terraform.tfstate.backup
+# Node dependencies
+node_modules

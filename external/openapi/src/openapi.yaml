@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Giggler API
+  termsOfService: https://github.com/abc-valera/giggler-golang
+  contact:
+    email: zoocity14@gmail.com
+    url: https://github.com/abc-valera/giggler-golang
+  description: API for the Giggler social network
+externalDocs:
+  description: Learn more about the project.
+  url: https://github.com/abc-valera/giggler-golang
+servers:
+  - url: http://api.localhost:3000/v1
+    description: Local development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  - name: auth
+    description: Sessions Management
+  - name: me
+    description: User Profile Settings
+  - name: jokes
+    description: Jokes operations
+paths:
+  /auth/register:
+    $ref: paths/auth_register.yaml
+  /auth/login:
+    $ref: paths/auth_login.yaml
+  /auth/refresh:
+    $ref: paths/auth_refresh.yaml
+  /me:
+    $ref: paths/me.yaml
+  /jokes:
+    $ref: paths/jokes.yaml

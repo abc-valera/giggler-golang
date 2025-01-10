@@ -1,55 +1,25 @@
 package main
 
 import (
-	"embed"
+	"context"
+	"os"
+	"os/signal"
+	"time"
 
-	"github.com/abc-valera/netsly-golang/internal/application"
-	"github.com/abc-valera/netsly-golang/internal/domain/entity"
-	"github.com/abc-valera/netsly-golang/internal/domain/util/coderr"
-	"github.com/abc-valera/netsly-golang/internal/infrastructure/globals"
-	"github.com/abc-valera/netsly-golang/internal/infrastructure/persistences"
-	"github.com/abc-valera/netsly-golang/internal/infrastructure/services"
-	"github.com/abc-valera/netsly-golang/internal/presentation"
+	"github.com/abc-valera/giggler-golang/src/view"
 )
 
-// Embedded files
-
-//go:embed internal/presentation/jsonApi/static
-var jsonApiStaticFiles embed.FS
-
-//go:embed gen/openapi/openapi.yaml
-var jsonApiOpenapiFile []byte
-
 func main() {
-	// Init Globals
-	globals.New()
+	// Stop program execution until receiving an interrupt signal
+	gracefulShutdown := make(chan os.Signal, 1)
+	signal.Notify(gracefulShutdown, os.Interrupt)
+	<-gracefulShutdown
 
-	// Init Services
-	services := services.NewServices()
+	// Gracefully shutdown the http server
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 
-	// Init DB
-	db := persistences.NewDB()
-
-	// Init Entities
-	entities := entity.NewEntities(entity.NewDependency(db, services))
-
-	// Init usecases
-	usecases := application.NewUsecases(application.NewDependency(db, services))
-
-	// Check if all layers are initialized correctly
-	coderr.NoErr(coderr.CheckIfStructHasEmptyFields(db.Commands()))
-	coderr.NoErr(coderr.CheckIfStructHasEmptyFields(db.Queries()))
-	coderr.NoErr(coderr.CheckIfStructHasEmptyFields(services))
-	coderr.NoErr(coderr.CheckIfStructHasEmptyFields(entities))
-	coderr.NoErr(coderr.CheckIfStructHasEmptyFields(usecases))
-
-	// Start the server
-	presentation.StartServer(
-		jsonApiStaticFiles,
-		jsonApiOpenapiFile,
-
-		services,
-		entities,
-		usecases,
-	)
+	if err := view.HttpServer.Shutdown(ctx); err != nil {
+		panic(err)
+	}
 }
