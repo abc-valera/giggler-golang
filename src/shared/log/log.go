@@ -1,12 +1,14 @@
-package logger
+package log
 
 import (
 	"io"
 	"log/slog"
 	"os"
 
-	"github.com/abc-valera/template-golang/src/components/env"
+	"github.com/abc-valera/giggler-golang/src/components/env"
 )
+
+var loggerVar = initLogger()
 
 // loggerInterface is used to provide a simpler interface for logging
 type loggerInterface interface {
@@ -16,7 +18,7 @@ type loggerInterface interface {
 	Error(message string, vals ...any)
 }
 
-var loggerVar = func() loggerInterface {
+func initLogger() loggerInterface {
 	switch env.Load("LOGGER") {
 	case "slog_stdout":
 		return slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -25,7 +27,7 @@ var loggerVar = func() loggerInterface {
 	default:
 		panic(env.ErrInvalidEnvValue)
 	}
-}()
+}
 
 func Debug(message string, vals ...any) { loggerVar.Debug(message, vals...) }
 

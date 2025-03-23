@@ -6,28 +6,28 @@ import (
 )
 
 type codeMessage struct {
-	code    Code   // Code provides general information about the error
-	message string // Message provides additional context in human-readable form
+	Code    Code   // Code provides general information about the error
+	Message string // Message provides additional context in human-readable form
 }
 
 func NewCodeMessage(code Code, message string) error {
 	return &codeMessage{
-		code:    code,
-		message: message,
+		Code:    code,
+		Message: message,
 	}
 }
 
 func NewCodeError(code Code, err error) error {
 	return &codeMessage{
-		code:    code,
-		message: err.Error(),
+		Code:    code,
+		Message: err.Error(),
 	}
 }
 
 func NewCodeMessageError(code Code, message string, err error) error {
 	return &codeMessage{
-		code:    code,
-		message: fmt.Sprintf("%s: %s", message, err.Error()),
+		Code:    code,
+		Message: fmt.Sprintf("%s: %s", message, err.Error()),
 	}
 }
 
@@ -35,10 +35,10 @@ func NewCodeMessageError(code Code, message string, err error) error {
 func (e codeMessage) Error() string {
 	var buf bytes.Buffer
 
-	if e.code != "" {
-		fmt.Fprintf(&buf, "<%s> ", e.code)
+	if e.Code != "" {
+		fmt.Fprintf(&buf, "<%s> ", e.Code)
 	}
-	buf.WriteString(e.message)
+	buf.WriteString(e.Message)
 
 	return buf.String()
 }

@@ -1,6 +1,8 @@
 package app
 
-import "github.com/abc-valera/template-golang/src/components/env"
+import (
+	"github.com/abc-valera/giggler-golang/src/components/env"
+)
 
 var modeVar = initMode()
 

@@ -1,0 +1,19 @@
+get:
+  operationId: JokesGet
+  summary: Returns the latest jokes
+  tags:
+    - joke
+  parameters:
+    - $ref: ../../shared/pagination/limit_param.yaml
+    - $ref: ../../shared/pagination/offset_param.yaml
+  security:
+    - bearerAuth: []
+  responses:
+    200:
+      description: Your jokes
+      content:
+        application/json:
+          schema:
+            $ref: jokes_schema.yaml
+    default:
+      $ref: ../../shared/error/error_schema.yaml

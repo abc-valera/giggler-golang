@@ -43,12 +43,12 @@ func ErrorCode(err error) Code {
 	var internalErrTarget *internal
 	if err == nil {
 		return ""
-	} else if e, ok := err.(*codeMessage); ok && e.code != "" {
-		return e.code
+	} else if e, ok := err.(*codeMessage); ok && e.Code != "" {
+		return e.Code
 	} else if _, ok := err.(*internal); ok {
 		return CodeInternal
 	} else if errors.As(err, &messageErrTarget) {
-		return messageErrTarget.code
+		return messageErrTarget.Code
 	} else if errors.As(err, &internalErrTarget) {
 		return CodeInternal
 	}

@@ -5,15 +5,21 @@ WORKDIR /app
 COPY go.* .
 RUN go mod download
 
+COPY ./external ./external
 COPY ./src ./src
 
 RUN go build -o main ./src/main.go
+RUN go build -o sqlite-migrate ./external/sqlite/migrate.go
 
 # RUN STAGE
 FROM alpine
 WORKDIR /app
 
 COPY --from=builder /app/main .
+COPY --from=builder /app/sqlite-migrate .
+
+ENV SQLITE_PATH=./local/db.sqlite3
+RUN ./sqlite-migrate
 
 ENV PORT=3000
 EXPOSE ${PORT}

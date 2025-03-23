@@ -9,7 +9,7 @@ import (
 
 var ErrInvalidEnvValue = errors.New("invalid env value")
 
-// Load is a shortcut for trimming and empty-cheking env vars.
+// Load is a shortcut for trimming and empty-cheking environemnt variables.
 // If the env var is not set, it will exit.
 func Load(key string) string {
 	env, ok := os.LookupEnv(key)

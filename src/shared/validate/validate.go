@@ -1,11 +1,13 @@
 package validate
 
 import (
-	"github.com/abc-valera/template-golang/src/components/enum"
+	"github.com/abc-valera/giggler-golang/src/components/enum"
 	"github.com/go-playground/validator/v10"
 )
 
-var validate = func() *validator.Validate {
+var validate = initValidate()
+
+func initValidate() *validator.Validate {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	// Define and register custom validation functions here:
@@ -22,7 +24,7 @@ var validate = func() *validator.Validate {
 	validate.RegisterValidation("enum", validateIEnum)
 
 	return validate
-}()
+}
 
 func Struct(s any) error {
 	return validate.Struct(s)

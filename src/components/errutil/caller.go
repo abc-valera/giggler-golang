@@ -14,7 +14,7 @@ func caller(skip int) string {
 	var msg string
 
 	// Split the file path
-	split := strings.Split(file, "template-golang/")
+	split := strings.Split(file, "giggler-golang/")
 	if len(split) == 1 {
 		msg = fmt.Sprintf("[%s:%d]", file, line)
 	} else {
