@@ -1,0 +1,12 @@
+services:
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: unless-stopped
+    # if you are running as root then set it to 0
+    # else find the right id with the id -u command
+    user: "0"
+    ports:
+      - "3100:3000"
+    volumes:
+      - "$PWD/local/grafana:/var/lib/grafana"

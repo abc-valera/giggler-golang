@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "golang.go",
+    "esbenp.prettier-vscode",
+    "Gruntfuggly.todo-tree",
+    "tamasfe.even-better-toml",
+    "dotenv.dotenv-vscode"
+  ]
+}
