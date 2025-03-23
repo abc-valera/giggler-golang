@@ -1,0 +1,88 @@
+name: giggler-golang-dev
+services:
+  # Dependency Services
+  # TODO: grafana loki
+  # TODO: grafana tempo
+  # TODO: prometheus
+  db:
+    image: postgres
+    # TODO: Move this env to the .env file
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+  db-migrate:
+    image: migrate/migrate
+    volumes:
+      - ./external/migrations:/migrations
+    command: >
+      -path=/migrations/
+      -database postgresql://postgres:postgres@db:5432/postgres?sslmode=disable
+      up
+    depends_on:
+      db:
+        condition: service_healthy
+  # The API itself
+  api:
+    build:
+      context: .
+      dockerfile: ./src/cmd/api/Dockerfile.dev
+      args:
+        WORKDIR_PATH: ${PWD}
+        BUILD_VERSION: ${BUILD_VERSION}
+    env_file:
+      - ./env/.env
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - local:${PWD}/local
+      - ./src:${PWD}/src
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${API_PORT}/build-version"]
+      start_period: 60s
+      interval: 1s
+      timeout: 1s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
+  # Consumer Services
+  openapi:
+    build:
+      context: .
+      dockerfile: ./external/openapi/cmd/Dockerfile
+    env_file:
+      - ./env/.env
+    ports:
+      - "${OPENAPI_PORT}:${OPENAPI_PORT}"
+    depends_on:
+      api:
+        condition: service_healthy
+  grafana:
+    image: grafana/grafana-oss
+    restart: unless-stopped
+    environment:
+      GF_LOG_LEVEL: warn
+    # if you are running as root then set it to 0
+    # else find the right id with the id -u command
+    user: "0"
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana:/var/lib/grafana
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  local:
+  postgres:
+  grafana:

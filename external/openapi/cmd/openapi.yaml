@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Giggler API
+  termsOfService: https://giggler-golang
+  contact:
+    email: valeriy.tymofieiev@gmail.com
+    url: https://giggler-golang
+  description: API for the Giggler social network
+externalDocs:
+  description: Learn more about the project.
+  url: https://giggler-golang
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /auth/register:
+    $ref: ../features/auth/path_auth_register.yaml
+  /auth/login:
+    $ref: ../features/auth/path_auth_login.yaml
+  /auth/refresh:
+    $ref: ../features/auth/path_auth_refresh.yaml
+  /user:
+    $ref: ../features/user/path_user.yaml
+  /jokes:
+    $ref: ../features/joke/path_jokes.yaml
