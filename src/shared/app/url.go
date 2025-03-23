@@ -3,8 +3,8 @@ package app
 import (
 	"net/url"
 
-	"github.com/abc-valera/template-golang/src/components/env"
-	"github.com/abc-valera/template-golang/src/components/errutil"
+	"github.com/abc-valera/giggler-golang/src/shared/env"
+	"github.com/abc-valera/giggler-golang/src/shared/errutil"
 )
 
 var urlVar = initURL()

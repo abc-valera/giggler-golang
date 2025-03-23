@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/abc-valera/template-golang/src/components/errutil"
+	"github.com/abc-valera/giggler-golang/src/shared/errutil"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"

@@ -2,7 +2,7 @@
   "todo-tree.highlights.enabled": false,
   "todo-tree.general.tags": ["TODO", "IDEA", "BUG", "DEBUG"],
 
-  "go.testEnvFile": "${workspaceFolder}/env/.env",
+  "go.testEnvFile": "${workspaceFolder}/env/.test.env",
   "go.testFlags": ["-count=1"],
   "go.testTimeout": "5s",
 
@@ -12,9 +12,19 @@
     "ui.semanticTokens": true
   },
 
+  "[go.mod]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+
   "go.lintOnSave": "workspace",
   "go.lintTool": "revive",
   "go.lintFlags": ["-config", "./config/revive.toml"],
+
+  "[sql]": {
+    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+  },
+  "Prettier-SQL.keywordCase": "upper",
+  "Prettier-SQL.expressionWidth": 80,
 
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
