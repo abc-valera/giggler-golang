@@ -1,0 +1,72 @@
+# https://taskfile.dev
+
+version: "3"
+
+env:
+  VERSION: git rev-parse --short=4 HEAD
+dotenv: ["env/.env"]
+
+tasks:
+  build:dockerimage:
+    cmd: docker build -t giggler-golang -f ./config/dockerfile .
+
+  start:dev:
+    cmd: go tool air -c ./config/air.toml
+
+  start:dev:dockerimage:
+    cmd: docker run
+      --env-file ./env/.env
+      -p 3000:3000
+      --rm -it giggler-golang
+
+  pprof:cpu:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/profile"
+
+  pprof:heap:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/heap"
+
+  pprof:heap:collect:
+    cmd: curl "$URL/debug/pprof/heap?gc=1" > "local/pprof/heap.$(date "+%y-%m-%d--%H-%M-%S")"
+
+  pprof:heap:diff:
+    cmd: go tool pprof -http=:3010 -diff_base $1 $2
+
+  pprof:allocs:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/allocs"
+
+  pprof:goroutine:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/goroutine"
+
+  local:clear:
+    cmd: rm -r ./local/*
+
+  sqlite:init:
+    cmd: go run ./external/sqlite/migrate.go
+
+  gorm:generate:
+    cmd: go run ./src/cmd/gormgen
+
+  openapi:lint:
+    cmd: npx redocly lint ./src/openapi.yaml
+
+  openapi:bundle:
+    cmd: npx redocly bundle
+      -o ./external/openapi/bundle.yaml
+      ./external/openapi/src/openapi.yaml
+
+  openapi:serve-docs:
+    env:
+      OPENAPI_DOCS_PORT: 3001
+    cmd: go run ./external/openapi/docs.go
+
+  view:generate:
+    cmd: go tool ogen
+      --package viewgen
+      --target ./src/shared/view/viewgen
+      --clean ./external/openapi/bundle.yaml
+
+  k6:generate:
+    cmd: npx openapi-to-k6 -v --include-sample-script ./external/openapi/bundle.yaml test/
+
+  grafana:start:
+    cmd: docker compose -f ./config/docker-compose.grafana.yaml up -d

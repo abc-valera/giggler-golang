@@ -2,16 +2,16 @@ package app
 
 import (
 	"net/http"
-	"os/exec"
-	"strings"
 
-	"github.com/abc-valera/template-golang/src/components/errutil"
+	"github.com/abc-valera/giggler-golang/src/shared/env"
 )
 
-var lastGitCommitID = strings.TrimSpace(string(errutil.Must(
-	exec.Command("git", "rev-parse", "HEAD").Output(),
-)))
+var version = env.Load("VERSION")
+
+func Version() string {
+	return version
+}
 
 func VersionHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(lastGitCommitID))
+	w.Write([]byte(version))
 }
