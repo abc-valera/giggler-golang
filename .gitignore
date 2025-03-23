@@ -1,0 +1,10 @@
+# Env files
+*.env
+!example.env
+
+# Local cache/infrastructure files
+local/*
+!local/.gitkeep
+
+# Node dependencies
+node_modules

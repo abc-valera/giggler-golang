@@ -1,0 +1,18 @@
+package email
+
+import (
+	"giggler-golang/src/shared/env"
+)
+
+var emailerInstance = func() iEmailer {
+	switch env.Load("EMAILER") {
+	case "dummy":
+		return dummy{}
+	default:
+		panic(env.ErrInvalidEnvValue)
+	}
+}()
+
+func Send(e EmailSendReq) error {
+	return emailerInstance.sendEmail(e)
+}

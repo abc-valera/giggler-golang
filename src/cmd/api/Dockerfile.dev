@@ -1,0 +1,26 @@
+FROM golang:1.24.4-alpine3.22
+
+# Variables that should be provided by the user
+ARG WORKDIR_PATH
+ARG BUILD_VERSION
+ENV API_PORT=8080
+
+# Env variables for Go modules and cache
+ENV GOMODCACHE=/root/go/pkg/mod
+ENV GOCACHE=/root/.cache/go-build
+
+LABEL build_version=${BUILD_VERSION}
+
+WORKDIR ${WORKDIR_PATH}
+EXPOSE ${API_PORT}
+
+RUN apk --no-cache add curl
+
+COPY go.* .
+RUN --mount=type=cache,target=${GOMODCACHE} \
+    go mod download
+
+COPY ./config ./config
+COPY ./src ./src
+
+CMD ["go", "tool", "air", "-c", "./config/air.toml"]

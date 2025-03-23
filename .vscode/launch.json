@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug api",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "output": "${workspaceFolder}/local/bin/api.debug",
+      "envFile": "${workspaceFolder}/env/.env",
+      "env": {},
+      "program": "${workspaceFolder}",
+      "args": []
+    }
+  ]
+}

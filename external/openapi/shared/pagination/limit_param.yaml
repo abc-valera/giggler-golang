@@ -1,0 +1,5 @@
+name: limit
+in: query
+description: Number of items returned. If not specified, all instances are returned.
+schema:
+  type: integer

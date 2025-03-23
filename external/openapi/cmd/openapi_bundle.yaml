@@ -1,0 +1,415 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Giggler API
+  termsOfService: https://giggler-golang
+  contact:
+    email: valeriy.tymofieiev@gmail.com
+    url: https://giggler-golang
+  description: API for the Giggler social network
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+externalDocs:
+  description: Learn more about the project.
+  url: https://giggler-golang
+paths:
+  /auth/register:
+    post:
+      operationId: AuthRegisterPost
+      summary: Performs user registration
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: example-username
+                email:
+                  type: string
+                  example: example@example.com
+                password:
+                  type: string
+                  example: qwerty123
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: Successful operation
+        default:
+          $ref: '#/components/responses/error_schema'
+  /auth/login:
+    post:
+      operationId: AuthLoginPost
+      summary: Performs user authentication
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@example.com
+                password:
+                  type: string
+                  example: qwerty123
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Registration was successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userResponse:
+                    $ref: '#/components/schemas/user_schema'
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                required:
+                  - userResponse
+                  - accessToken
+                  - refreshToken
+        default:
+          $ref: '#/components/responses/error_schema'
+  /auth/refresh:
+    post:
+      operationId: AuthRefreshPost
+      summary: Exchanges a refresh token for an access token
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+              required:
+                - refreshToken
+      responses:
+        '200':
+          description: New access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                required:
+                  - accessToken
+        default:
+          $ref: '#/components/responses/error_schema'
+  /user:
+    get:
+      operationId: UserGet
+      summary: Returns current user profile
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_schema'
+        default:
+          $ref: '#/components/responses/error_schema'
+    put:
+      operationId: UserPut
+      summary: Updates current user profile
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Data to update the current user profile
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: 123456
+                fullname:
+                  type: string
+                  example: John Doe
+                status:
+                  type: string
+                  example: active
+      responses:
+        '201':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_schema'
+        default:
+          $ref: '#/components/responses/error_schema'
+    delete:
+      operationId: UserDel
+      summary: Deletes current user profile
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Data to delete the current user profile
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: 123456
+              required:
+                - password
+      responses:
+        '204':
+          description: Successful deletion
+        default:
+          $ref: '#/components/responses/error_schema'
+  /jokes:
+    get:
+      operationId: JokesGet
+      summary: Returns the most relevant jokes
+      tags:
+        - joke
+      parameters:
+        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/offset_param'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Jokes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jokes_schema'
+        default:
+          $ref: '#/components/responses/error_schema'
+    post:
+      operationId: JokesPost
+      summary: Creates a new joke for current user
+      tags:
+        - joke
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Data to create a new joke for current user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Joke title
+                text:
+                  type: string
+                  example: Joke text
+                explanation:
+                  type: string
+                  example: Joke explanation
+              required:
+                - user_id
+                - title
+                - text
+      responses:
+        '201':
+          description: Created Joke
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/joke_schema'
+        default:
+          $ref: '#/components/responses/error_schema'
+    put:
+      operationId: JokesPut
+      summary: Updates joke for current user
+      tags:
+        - joke
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Data to update the joke for current user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jokeID:
+                  type: string
+                  example: 48690945-c3f9-45b4-9045-c6bcfb898f20
+                title:
+                  type: string
+                  example: Joke title
+                text:
+                  type: string
+                  example: Joke text
+                explanation:
+                  type: string
+                  example: Joke explanation
+              required:
+                - jokeID
+      responses:
+        '201':
+          description: Updated Joke
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/joke_schema'
+        default:
+          $ref: '#/components/responses/error_schema'
+    delete:
+      operationId: JokesDel
+      summary: Deletes joke for current user
+      tags:
+        - joke
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Data to delete the joke for current user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                joke_id:
+                  type: string
+                  example: 48690945-c3f9-45b4-9045-c6bcfb898f20
+              required:
+                - joke_id
+      responses:
+        '204':
+          description: Joke deleted
+        default:
+          $ref: '#/components/responses/error_schema'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    error_schema:
+      description: General Error
+      content:
+        application/json:
+          schema:
+            type: object
+            title: CodeError
+            properties:
+              error_message:
+                type: string
+                example: Internal error occurred
+            required:
+              - error_message
+  schemas:
+    user_schema:
+      title: User
+      type: object
+      properties:
+        id:
+          type: string
+          example: 48690945-c3f9-45b4-9045-c6bcfb898f20
+        username:
+          type: string
+          example: example-username
+        email:
+          type: string
+          example: example@example.com
+        fullname:
+          type: string
+          example: John Doe
+        status:
+          type: string
+          example: Making humor
+        createdAt:
+          type: string
+          format: date-time
+          example: '2021-08-01T00:00:00Z'
+      required:
+        - id
+        - username
+        - email
+        - createdAt
+    joke_schema:
+      title: Joke
+      type: object
+      properties:
+        id:
+          type: string
+          example: 48690945-c3f9-45b4-9045-c6bcfb898f20
+        userID:
+          type: string
+          example: 71582145-caf9-45b4-9045-caf971582145
+        title:
+          type: string
+          example: Example Joke
+        text:
+          type: string
+          example: Something Funny
+        explanation:
+          type: string
+          example: Ahh.. Don't you get it?
+        createdAt:
+          type: string
+          format: date-time
+          example: '2021-08-01T00:00:00Z'
+      required:
+        - id
+        - userID
+        - title
+        - text
+        - createdAt
+    jokes_schema:
+      type: array
+      title: Jokes
+      items:
+        $ref: '#/components/schemas/joke_schema'
+  parameters:
+    limit_param:
+      name: limit
+      in: query
+      description: Number of items returned. If not specified, all instances are returned.
+      schema:
+        type: integer
+    offset_param:
+      name: offset
+      in: query
+      description: Number of items to skip. If not specified, none items are skipped.
+      schema:
+        type: integer

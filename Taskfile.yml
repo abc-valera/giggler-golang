@@ -1,0 +1,126 @@
+# https://taskfile.dev
+
+version: "3"
+
+env:
+  # BUILD_VERSION is a git status in a format: <branch>:<commit hash> (<clean|dirty>)
+  BUILD_VERSION:
+    sh: printf "%s:%s (%s)" "$(git rev-parse --abbrev-ref HEAD)" "$(git rev-parse --short=4 HEAD)" "$(git status --porcelain | grep -q . && echo "dirty" || echo "clean")"
+
+dotenv: ["env/.env"]
+
+tasks:
+  default:
+    cmd: task --list-all
+
+  dev:
+    cmds:
+      - task dev:build
+      - task dev:up
+
+  dev:build:
+    cmd: docker compose
+      -f ./config/docker-compose.dev.yaml
+      --project-directory ./
+      build
+
+  dev:up:
+    cmd: docker compose
+      -f ./config/docker-compose.dev.yaml
+      --project-directory ./
+      up
+
+  dev:down:
+    prompt: This is a dangerous command... Do you want to continue?
+    cmd: docker compose
+      -f ./config/docker-compose.dev.yaml
+      --project-directory ./
+      down
+
+  dev:start:
+    cmd: docker compose
+      -f ./config/docker-compose.dev.yaml
+      --project-directory ./
+      start
+
+  dev:stop:
+    cmd: docker compose
+      -f ./config/docker-compose.dev.yaml
+      --project-directory ./
+      stop
+
+  release:
+    cmds:
+      - task release:build
+      - task release:up
+
+  release:build:
+    cmd: docker compose
+      -f ./config/docker-compose.release.yaml
+      --project-directory ./
+      build
+
+  release:up:
+    cmd: docker compose
+      -f ./config/docker-compose.release.yaml
+      --project-directory ./
+      up
+
+  release:down:
+    prompt: This is a dangerous command... Do you want to continue?
+    cmd: docker compose
+      -f ./config/docker-compose.release.yaml
+      --project-directory ./
+      down
+
+  release:start:
+    cmd: docker compose
+      -f ./config/docker-compose.release.yaml
+      --project-directory ./
+      start
+
+  release:stop:
+    cmd: docker compose
+      -f ./config/docker-compose.release.yaml
+      --project-directory ./
+      stop
+
+  pprof:cpu:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/profile"
+
+  pprof:heap:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/heap"
+
+  pprof:heap:collect:
+    cmd: curl "$URL/debug/pprof/heap?gc=1" > "local/pprof/heap.$(date "+%y-%m-%d--%H-%M-%S")"
+
+  pprof:heap:diff:
+    cmd: go tool pprof -http=:3010 -diff_base $1 $2
+
+  pprof:allocs:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/allocs"
+
+  pprof:goroutine:
+    cmd: go tool pprof -http=:3010 "$URL/debug/pprof/goroutine"
+
+  gorm:generate:
+    cmd: go run ./src/cmd/gormgen
+
+  openapi:lint:
+    cmd: npx redocly lint ./external/openapi/cmd/openapi.yaml
+
+  openapi:bundle:
+    cmd: npx redocly bundle
+      -o ./external/openapi/cmd/openapi_bundle.yaml
+      ./external/openapi/cmd/openapi.yaml
+
+  view:generate:
+    cmd: go tool ogen
+      --package viewgen
+      --target ./src/shared/view/viewgen
+      --clean ./external/openapi/cmd/openapi_bundle.yaml
+
+  k6:generate:
+    cmd: npx openapi-to-k6 -v
+      --include-sample-script ./external/openapi/cmd/openapi_bundle.yaml
+      test/

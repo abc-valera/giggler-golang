@@ -1,0 +1,38 @@
+# BUILD STAGE
+FROM golang:1.24.4-alpine3.22 AS builder
+
+# Variables that should be provided by the user
+ARG WORKDIR_PATH
+ARG BUILD_VERSION
+ENV API_PORT=8080
+
+# Env variables for Go modules and cache
+ENV GOMODCACHE=/root/go/pkg/mod
+ENV GOCACHE=/root/.cache/go-build
+
+LABEL build_version=${BUILD_VERSION}
+
+WORKDIR ${WORKDIR_PATH}
+EXPOSE ${API_PORT}
+
+COPY go.* .
+RUN --mount=type=cache,target=${GOMODCACHE} \
+    go mod download
+
+COPY ./src ./src
+RUN --mount=type=cache,target=${GOMODCACHE} \
+    --mount=type=cache,target=${GOCACHE} \
+    go build -ldflags="-X 'giggler-golang/src/shared/app.buildVersion=${BUILD_VERSION}'" -o /usr/bin/giggler-golang-api ./src/cmd/api
+
+# RUN STAGE 
+FROM alpine:3.22
+
+ARG WORKDIR_PATH
+
+RUN apk --no-cache add curl
+
+WORKDIR ${WORKDIR_PATH}
+
+COPY --from=builder /usr/bin/giggler-golang-api .
+
+CMD ["./giggler-golang-api"]
