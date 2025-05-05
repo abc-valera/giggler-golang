@@ -6,7 +6,7 @@ tmp_dir = "local/air"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-cmd = "go build -o local/bin/giggler ./src/cmd/app"
+cmd = "go build -o local/bin/giggler ./src/cmd/api"
 # Binary file yields from `cmd`.
 bin = "local/bin/giggler"
 # Watch these directories if you specified.

@@ -1,0 +1,78 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./src/cmd/api/Dockerfile.dev
+    env_file:
+      - ./env/.env
+    environment:
+      VERSION: ${VERSION}
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - ./src:/workspace/src
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${API_PORT}/version"]
+      start_period: 2s
+      start_interval: 500ms
+      interval: 5s
+      timeout: 2s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  # Dependency Services
+  db:
+    image: postgres
+    env_file:
+      - ./env/.env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - "$PWD/external/migrations:/migrations"
+    command: >
+      -path=/migrations/
+      -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SSLMODE}
+      up
+    depends_on:
+      db:
+        condition: service_healthy
+  # Consumer Services
+  openapi:
+    build:
+      context: .
+      dockerfile: ./external/openapi/Dockerfile
+    ports:
+      - "${OPENAPI_PORT}:${OPENAPI_PORT}"
+    env_file:
+      - ./env/.env
+    depends_on:
+      api:
+        condition: service_healthy
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: unless-stopped
+    # if you are running as root then set it to 0
+    # else find the right id with the id -u command
+    user: "0"
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana:/var/lib/grafana
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres:
+  grafana:

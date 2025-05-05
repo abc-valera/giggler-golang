@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	openapiDocsPort = strings.TrimSpace(os.Getenv("OPENAPI_DOCS_PORT"))
+	port = strings.TrimSpace(os.Getenv("OPENAPI_PORT"))
 
 	//go:embed scalar_docs.html
 	docsHTML string
@@ -22,13 +22,13 @@ var (
 )
 
 func main() {
-	if openapiDocsPort == "" {
-		log.Fatal("SQLITE_PATH env is required")
+	if port == "" {
+		log.Fatal("OPENAPI_PORT env is required")
 	}
 
 	var docsBytes bytes.Buffer
-	if err := template.Must(template.New("docs").Parse(docsHTML)).Execute(&docsBytes, "http://localhost:3001/bundle"); err != nil {
-		panic(err)
+	if err := template.Must(template.New("docs").Parse(docsHTML)).Execute(&docsBytes, port); err != nil {
+		log.Fatalf("failed to parse docs template: %v", err)
 	}
 
 	mux := http.NewServeMux()
@@ -42,8 +42,8 @@ func main() {
 		w.Write(bundle)
 	})
 
-	fmt.Println("Serving OpenAPI docs at http://localhost:3001/")
-	if err := http.ListenAndServe(":3001", mux); err != nil {
-		panic(err)
+	fmt.Println("Serving OpenAPI docs at http://localhost:" + port + "/")
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux); err != nil {
+		log.Fatalf("failed to start server: %v", err)
 	}
 }
