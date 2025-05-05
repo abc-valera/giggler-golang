@@ -3,8 +3,9 @@ package authView
 import (
 	"time"
 
-	"github.com/abc-valera/giggler-golang/src/shared/env"
-	"github.com/abc-valera/giggler-golang/src/shared/errutil"
+	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 

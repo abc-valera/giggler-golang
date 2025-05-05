@@ -4,11 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/abc-valera/giggler-golang/src/features/joke/jokeModel"
-	"github.com/abc-valera/giggler-golang/src/shared/data"
-	"github.com/abc-valera/giggler-golang/src/shared/env"
-	"github.com/abc-valera/giggler-golang/src/shared/otel"
-	"github.com/abc-valera/giggler-golang/src/shared/validate"
+	"giggler-golang/src/features/joke/jokeDto"
+	"giggler-golang/src/features/joke/jokeModel"
+	"giggler-golang/src/shared/data"
+	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/validate"
+
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -18,10 +20,10 @@ var command = initCommand()
 type iCommand data.IGenericCommandCreateUpdateDelete[jokeModel.Joke]
 
 func initCommand() func(dataStore data.IDS) iCommand {
-	switch data.DbVal {
-	case data.DbVariantGorm:
+	switch data.DbEnvVal {
+	case data.DbVariantPostgres:
 		return func(dataStore data.IDS) iCommand {
-			return data.NewGormGenericCommand(data.GormDS(dataStore), jokeModel.NewGormDTO)
+			return data.NewGormGenericCommand(data.GormDS(dataStore), jokeDto.NewGorm)
 		}
 	default:
 		panic(env.ErrInvalidEnvValue)

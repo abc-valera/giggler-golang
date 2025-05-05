@@ -3,21 +3,22 @@ package userView
 import (
 	"context"
 
-	"github.com/abc-valera/giggler-golang/src/features/joke/jokeData"
-	"github.com/abc-valera/giggler-golang/src/features/joke/jokeModel"
-	"github.com/abc-valera/giggler-golang/src/features/user/userData"
-	"github.com/abc-valera/giggler-golang/src/features/user/userModel"
-	"github.com/abc-valera/giggler-golang/src/shared/contexts"
-	"github.com/abc-valera/giggler-golang/src/shared/data"
-	"github.com/abc-valera/giggler-golang/src/shared/otel"
-	"github.com/abc-valera/giggler-golang/src/shared/view"
-	"github.com/abc-valera/giggler-golang/src/shared/view/viewgen"
+	"giggler-golang/src/features/joke/jokeData"
+	"giggler-golang/src/features/joke/jokeDto"
+	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/features/user/userDto"
+	"giggler-golang/src/shared/contexts"
+	"giggler-golang/src/shared/data"
+	"giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/view/viewUtil"
+	"giggler-golang/src/shared/view/viewgen"
+
 	"go.opentelemetry.io/otel/trace"
 )
 
-type View struct{}
+type Handler struct{}
 
-func (View) UserGet(ctx context.Context) (*viewgen.UserSchema, error) {
+func (Handler) UserGet(ctx context.Context) (*viewgen.UserSchema, error) {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
@@ -31,10 +32,10 @@ func (View) UserGet(ctx context.Context) (*viewgen.UserSchema, error) {
 	if err != nil {
 		return nil, err
 	}
-	return userModel.NewViewDTO(user), nil
+	return userDto.NewViewDTO(user), nil
 }
 
-func (View) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.UserSchema, error) {
+func (Handler) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.UserSchema, error) {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
@@ -46,17 +47,17 @@ func (View) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.User
 
 	user, err := userData.Update(ctx, data.DB, userData.UpdateReq{
 		ID:       userID,
-		Password: view.NewDomainPointer(req.Password),
-		Fullname: view.NewDomainPointer(req.Fullname),
-		Status:   view.NewDomainPointer(req.Status),
+		Password: viewUtil.NewDomainPointer(req.Password),
+		Fullname: viewUtil.NewDomainPointer(req.Fullname),
+		Status:   viewUtil.NewDomainPointer(req.Status),
 	})
 	if err != nil {
 		return nil, err
 	}
-	return userModel.NewViewDTO(user), nil
+	return userDto.NewViewDTO(user), nil
 }
 
-func (View) UserDel(ctx context.Context, req *viewgen.UserDelReq) error {
+func (Handler) UserDel(ctx context.Context, req *viewgen.UserDelReq) error {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
@@ -72,11 +73,11 @@ func (View) UserDel(ctx context.Context, req *viewgen.UserDelReq) error {
 	})
 }
 
-func (View) UserJokesGet(ctx context.Context, params viewgen.UserJokesGetParams) (viewgen.JokesSchema, error) {
+func (Handler) UserJokesGet(ctx context.Context, params viewgen.UserJokesGetParams) (viewgen.JokesSchema, error) {
 	panic("not implemented")
 }
 
-func (View) UserJokesPost(ctx context.Context, req *viewgen.UserJokesPostReq) (*viewgen.JokeSchema, error) {
+func (Handler) UserJokesPost(ctx context.Context, req *viewgen.UserJokesPostReq) (*viewgen.JokeSchema, error) {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
@@ -89,7 +90,7 @@ func (View) UserJokesPost(ctx context.Context, req *viewgen.UserJokesPostReq) (*
 	createdJoke, err := jokeData.Create(ctx, data.DB, jokeData.CreateReq{
 		Title:       req.Title,
 		Text:        req.Text,
-		Explanation: view.NewDomainPointer(req.Explanation),
+		Explanation: viewUtil.NewDomainPointer(req.Explanation),
 
 		UserID: userID,
 	})
@@ -97,27 +98,27 @@ func (View) UserJokesPost(ctx context.Context, req *viewgen.UserJokesPostReq) (*
 		return nil, err
 	}
 
-	return jokeModel.NewViewDTO(createdJoke), err
+	return jokeDto.NewViewDTO(createdJoke), err
 }
 
-func (View) UserJokesPut(ctx context.Context, req *viewgen.UserJokesPutReq) (*viewgen.JokeSchema, error) {
+func (Handler) UserJokesPut(ctx context.Context, req *viewgen.UserJokesPutReq) (*viewgen.JokeSchema, error) {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
 
 	updatedJoke, err := jokeData.Update(ctx, data.DB, jokeData.UpdateReq{
 		ID:          req.JokeID,
-		Title:       view.NewDomainPointer(req.Title),
-		Text:        view.NewDomainPointer(req.Text),
-		Explanation: view.NewDomainPointer(req.Explanation),
+		Title:       viewUtil.NewDomainPointer(req.Title),
+		Text:        viewUtil.NewDomainPointer(req.Text),
+		Explanation: viewUtil.NewDomainPointer(req.Explanation),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return jokeModel.NewViewDTO(updatedJoke), err
+	return jokeDto.NewViewDTO(updatedJoke), err
 }
 
-func (View) UserJokesDel(ctx context.Context, req *viewgen.UserJokesDelReq) error {
+func (Handler) UserJokesDel(ctx context.Context, req *viewgen.UserJokesDelReq) error {
 	panic("not implemented")
 }

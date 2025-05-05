@@ -4,25 +4,27 @@ import (
 	"context"
 	"time"
 
-	"github.com/abc-valera/giggler-golang/src/features/user/userModel"
-	"github.com/abc-valera/giggler-golang/src/shared/data"
-	"github.com/abc-valera/giggler-golang/src/shared/env"
-	"github.com/abc-valera/giggler-golang/src/shared/otel"
-	"github.com/abc-valera/giggler-golang/src/shared/passworder"
-	"github.com/abc-valera/giggler-golang/src/shared/validate"
+	"giggler-golang/src/features/user/userDto"
+	"giggler-golang/src/features/user/userModel"
+	"giggler-golang/src/shared/data"
+	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/passworder"
+	"giggler-golang/src/shared/validate"
+
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
 )
 
 var command = initCommand()
 
-type iCommand data.IGenericCommandCreateUpdateDelete[userModel.User]
+type ICommand data.IGenericCommandCreateUpdateDelete[userModel.User]
 
-func initCommand() func(data.IDS) iCommand {
-	switch data.DbVal {
-	case data.DbVariantGorm:
-		return func(dataStore data.IDS) iCommand {
-			return data.NewGormGenericCommand(data.GormDS(dataStore), userModel.NewGormDTO)
+func initCommand() func(data.IDS) ICommand {
+	switch data.DbEnvVal {
+	case data.DbVariantPostgres:
+		return func(dataStore data.IDS) ICommand {
+			return data.NewGormGenericCommand(data.GormDS(dataStore), userDto.NewGormDTO)
 		}
 	default:
 		panic(env.ErrInvalidEnvValue)

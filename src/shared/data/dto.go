@@ -4,7 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/abc-valera/giggler-golang/src/shared/errutil"
+	"giggler-golang/src/shared/errutil"
+
 	"gorm.io/gorm"
 )
 

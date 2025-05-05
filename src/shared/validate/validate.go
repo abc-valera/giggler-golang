@@ -1,7 +1,8 @@
 package validate
 
 import (
-	"github.com/abc-valera/giggler-golang/src/shared/enum"
+	"giggler-golang/src/shared/enum"
+
 	"github.com/go-playground/validator/v10"
 )
 

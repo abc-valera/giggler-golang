@@ -1,9 +1,12 @@
 package main
 
 import (
-	"os"
+	"fmt"
 
-	"gorm.io/driver/sqlite"
+	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil"
+
+	"gorm.io/driver/postgres"
 	"gorm.io/gen"
 	"gorm.io/gorm"
 )
@@ -16,15 +19,16 @@ func main() {
 		FieldNullable: true,
 	})
 
-	dbPath, ok := os.LookupEnv("SQLITE_PATH")
-	if !ok {
-		panic("SQLITE_PATH env not set")
-	}
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		env.Load("POSTGRES_HOST"),
+		env.Load("POSTGRES_PORT"),
+		env.Load("POSTGRES_USER"),
+		env.Load("POSTGRES_PASSWORD"),
+		env.Load("POSTGRES_DB"),
+		env.Load("POSTGRES_SSLMODE"),
+	)
 
-	db, err := gorm.Open(sqlite.Open(dbPath))
-	if err != nil {
-		panic(err)
-	}
+	db := errutil.Must(gorm.Open(postgres.Open(dsn)))
 
 	g.UseDB(db)
 

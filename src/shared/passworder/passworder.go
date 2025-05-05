@@ -9,8 +9,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/abc-valera/giggler-golang/src/shared/errutil"
-	"github.com/abc-valera/giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/errutil"
+	"giggler-golang/src/shared/otel"
+
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/crypto/argon2"
 )

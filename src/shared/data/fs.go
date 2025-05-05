@@ -5,20 +5,21 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/abc-valera/giggler-golang/src/shared/dependency"
-	"github.com/abc-valera/giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/dependency"
+	"giggler-golang/src/shared/env"
 )
 
 var (
 	FsVariantLocal = "local"
-	FsVal          = env.Load("FS")
-	FS             = initFS()
+
+	FsVal = env.Load("FS")
+	FS    = initFS()
 )
 
 func initFS() IDS {
 	switch FsVal {
 	case FsVariantLocal:
-		fsLocalPath := env.Load("FS_LOCAL_PATH")
+		fsLocalPath := env.Load("LOCAL_DSN")
 
 		if err := os.MkdirAll(fsLocalPath, 0o755); err != nil {
 			if !os.IsExist(err) {

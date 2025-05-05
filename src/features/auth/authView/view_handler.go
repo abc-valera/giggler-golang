@@ -3,21 +3,22 @@ package authView
 import (
 	"context"
 
-	"github.com/abc-valera/giggler-golang/src/features/auth/internal/authLogic"
-	"github.com/abc-valera/giggler-golang/src/features/user/userModel"
-	"github.com/abc-valera/giggler-golang/src/shared/otel"
-	"github.com/abc-valera/giggler-golang/src/shared/view/viewgen"
+	"giggler-golang/src/features/auth/internal"
+	"giggler-golang/src/features/user/userDto"
+	"giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/view/viewgen"
+
 	"go.opentelemetry.io/otel/trace"
 )
 
-type View struct{}
+type Handler struct{}
 
-func (View) AuthRegisterPost(ctx context.Context, req *viewgen.AuthRegisterPostReq) error {
+func (Handler) AuthRegisterPost(ctx context.Context, req *viewgen.AuthRegisterPostReq) error {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
 
-	_, err := authLogic.AuthRegister(ctx, authLogic.AuthRegisterReq{
+	_, err := internal.AuthRegister(ctx, internal.AuthRegisterReq{
 		Username: req.Username,
 		Email:    req.Email,
 		Password: req.Password,
@@ -25,12 +26,12 @@ func (View) AuthRegisterPost(ctx context.Context, req *viewgen.AuthRegisterPostR
 	return err
 }
 
-func (View) AuthLoginPost(ctx context.Context, req *viewgen.AuthLoginPostReq) (*viewgen.AuthLoginPostOK, error) {
+func (Handler) AuthLoginPost(ctx context.Context, req *viewgen.AuthLoginPostReq) (*viewgen.AuthLoginPostOK, error) {
 	var span trace.Span
 	ctx, span = otel.Trace(ctx)
 	defer span.End()
 
-	loggedUser, err := authLogic.AuthLogin(ctx, authLogic.AuthLoginReq{
+	loggedUser, err := internal.AuthLogin(ctx, internal.AuthLoginReq{
 		Email:    req.Email,
 		Password: req.Password,
 	})
@@ -49,13 +50,13 @@ func (View) AuthLoginPost(ctx context.Context, req *viewgen.AuthLoginPostReq) (*
 	}
 
 	return &viewgen.AuthLoginPostOK{
-		UserResponse: *userModel.NewViewDTO(loggedUser),
+		UserResponse: *userDto.NewViewDTO(loggedUser),
 		AccessToken:  access,
 		RefreshToken: refresh,
 	}, nil
 }
 
-func (View) AuthRefreshPost(ctx context.Context, req *viewgen.AuthRefreshPostReq) (*viewgen.AuthRefreshPostOK, error) {
+func (Handler) AuthRefreshPost(ctx context.Context, req *viewgen.AuthRefreshPostReq) (*viewgen.AuthRefreshPostOK, error) {
 	_, span := otel.Trace(ctx)
 	defer span.End()
 

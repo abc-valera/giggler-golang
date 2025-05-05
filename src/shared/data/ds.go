@@ -3,7 +3,8 @@ package data
 import (
 	"context"
 
-	"github.com/abc-valera/giggler-golang/src/shared/dependency"
+	"giggler-golang/src/shared/dependency"
+
 	"gorm.io/gorm"
 )
 

@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/abc-valera/giggler-golang/src/shared/data/gormgen/gormModel"
+	"giggler-golang/src/shared/data/gormgen/gormModel"
 )
 
 func newJoke(db *gorm.DB, opts ...gen.DOOption) joke {

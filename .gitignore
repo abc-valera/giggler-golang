@@ -1,6 +1,6 @@
 # Env files
 *.env
-!example.env
+!example.*.env
 
 # Local infrastructure files
 local/*/*

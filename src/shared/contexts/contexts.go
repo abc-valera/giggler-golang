@@ -3,7 +3,7 @@ package contexts
 import (
 	"context"
 
-	"github.com/abc-valera/giggler-golang/src/shared/errutil"
+	"giggler-golang/src/shared/errutil"
 )
 
 const userIDKey key = "user-id"

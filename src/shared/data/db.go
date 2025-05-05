@@ -3,35 +3,29 @@ package data
 import (
 	"context"
 
-	"github.com/abc-valera/giggler-golang/src/shared/dependency"
-	"github.com/abc-valera/giggler-golang/src/shared/env"
-	"github.com/abc-valera/giggler-golang/src/shared/errutil"
-	"github.com/abc-valera/giggler-golang/src/shared/log"
-	"github.com/glebarez/sqlite"
+	"giggler-golang/src/shared/dependency"
+	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil"
+	"giggler-golang/src/shared/log"
+
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
-	DbVariantGorm = "gorm"
-	DbVal         = env.Load("DB")
-	DB            = initDB()
+	DbVariantPostgres = "postgres"
+	DbEnvVal          = env.Load("DB")
+	dsn               = env.Load("POSTGRES_DSN")
+	DB                = initDB()
 )
 
 func initDB() IDS {
-	switch DbVal {
-	case DbVariantGorm:
-		// Data source name (DSN) for the database connection.
-		//
-		// Consider the following:
-		// - Set WAL mode, so readers and writers can access the database concurrently
-		// - Set busy timeout, so concurrent writers wait on each other instead of erroring immediately
-		// - Enable foreign key checks
-		dsn := env.Load("SQLITE_PATH") +
-			"?_pragma=journal_mode(WAL)" +
-			"&_pragma=busy_timeout(5000)" +
-			"&_pragma=foreign_keys(1)"
-
-		return dbGorm{errutil.Must(gorm.Open(sqlite.Open(dsn), &gorm.Config{TranslateError: true}))}
+	switch DbEnvVal {
+	case DbVariantPostgres:
+		return dbGorm{errutil.Must(gorm.Open(
+			postgres.Open(dsn),
+			&gorm.Config{TranslateError: true},
+		))}
 	default:
 		panic(env.ErrInvalidEnvValue)
 	}
