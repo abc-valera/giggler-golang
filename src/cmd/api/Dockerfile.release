@@ -1,0 +1,27 @@
+# BUILD STAGE
+FROM golang:1.24-alpine AS builder
+
+ARG WORKDIR_PATH=/workspace
+WORKDIR ${WORKDIR_PATH}
+
+COPY go.* .
+RUN go mod download
+
+COPY ./src ./src
+
+RUN go build -o binary ./src/cmd/api
+
+# RUN STAGE
+FROM alpine
+
+ARG WORKDIR_PATH=/workspace
+WORKDIR ${WORKDIR_PATH}
+
+COPY --from=builder ${WORKDIR_PATH}/binary ./binary
+
+RUN apk --no-cache add curl
+
+ENV API_PORT=8080
+EXPOSE ${API_PORT}
+
+CMD ["./binary"]

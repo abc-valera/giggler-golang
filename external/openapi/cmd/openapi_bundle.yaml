@@ -8,7 +8,7 @@ info:
     url: https://github.com/abc-valera/giggler-golang
   description: API for the Giggler social network
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:8080
     description: Local development server
 externalDocs:
   description: Learn more about the project.
@@ -41,10 +41,10 @@ paths:
                 - email
                 - password
       responses:
-        '201':
+        "201":
           description: Successful operation
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
   /auth/login:
     post:
       operationId: AuthLoginPost
@@ -68,7 +68,7 @@ paths:
                 - email
                 - password
       responses:
-        '200':
+        "200":
           description: Registration was successful
           content:
             application/json:
@@ -76,7 +76,7 @@ paths:
                 type: object
                 properties:
                   userResponse:
-                    $ref: '#/components/schemas/user_schema'
+                    $ref: "#/components/schemas/user_schema"
                   accessToken:
                     type: string
                     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
@@ -88,7 +88,7 @@ paths:
                   - accessToken
                   - refreshToken
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
   /auth/refresh:
     post:
       operationId: AuthRefreshPost
@@ -108,7 +108,7 @@ paths:
               required:
                 - refreshToken
       responses:
-        '200':
+        "200":
           description: New access token
           content:
             application/json:
@@ -121,7 +121,7 @@ paths:
                 required:
                   - accessToken
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
   /user:
     get:
       operationId: UserGet
@@ -131,14 +131,14 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Current user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user_schema'
+                $ref: "#/components/schemas/user_schema"
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
     put:
       operationId: UserPut
       summary: Updates current user profile
@@ -164,14 +164,14 @@ paths:
                   type: string
                   example: active
       responses:
-        '201':
+        "201":
           description: Updated user profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user_schema'
+                $ref: "#/components/schemas/user_schema"
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
     delete:
       operationId: UserDel
       summary: Deletes current user profile
@@ -193,10 +193,10 @@ paths:
               required:
                 - password
       responses:
-        '204':
+        "204":
           description: Successful deletion
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
   /user/jokes:
     get:
       operationId: UserJokesGet
@@ -204,19 +204,19 @@ paths:
       tags:
         - user
       parameters:
-        - $ref: '#/components/parameters/limit_param'
-        - $ref: '#/components/parameters/offset_param'
+        - $ref: "#/components/parameters/limit_param"
+        - $ref: "#/components/parameters/offset_param"
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Your jokes
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/jokes_schema'
+                $ref: "#/components/schemas/jokes_schema"
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
     post:
       operationId: UserJokesPost
       summary: Creates a new joke for current user
@@ -246,14 +246,14 @@ paths:
                 - title
                 - text
       responses:
-        '201':
+        "201":
           description: Created Joke
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/joke_schema'
+                $ref: "#/components/schemas/joke_schema"
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
     put:
       operationId: UserJokesPut
       summary: Updates joke for current user
@@ -284,14 +284,14 @@ paths:
               required:
                 - jokeID
       responses:
-        '201':
+        "201":
           description: Updated Joke
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/joke_schema'
+                $ref: "#/components/schemas/joke_schema"
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
     delete:
       operationId: UserJokesDel
       summary: Deletes joke for current user
@@ -313,10 +313,10 @@ paths:
               required:
                 - joke_id
       responses:
-        '204':
+        "204":
           description: Joke deleted
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
   /jokes:
     get:
       operationId: JokesGet
@@ -324,19 +324,19 @@ paths:
       tags:
         - joke
       parameters:
-        - $ref: '#/components/parameters/limit_param'
-        - $ref: '#/components/parameters/offset_param'
+        - $ref: "#/components/parameters/limit_param"
+        - $ref: "#/components/parameters/offset_param"
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Your jokes
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/jokes_schema'
+                $ref: "#/components/schemas/jokes_schema"
         default:
-          $ref: '#/components/responses/error_schema'
+          $ref: "#/components/responses/error_schema"
 components:
   securitySchemes:
     bearerAuth:
@@ -380,7 +380,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2021-08-01T00:00:00Z'
+          example: "2021-08-01T00:00:00Z"
       required:
         - id
         - username
@@ -408,7 +408,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2021-08-01T00:00:00Z'
+          example: "2021-08-01T00:00:00Z"
       required:
         - id
         - userID
@@ -419,7 +419,7 @@ components:
       type: array
       title: Jokes
       items:
-        $ref: '#/components/schemas/joke_schema'
+        $ref: "#/components/schemas/joke_schema"
   parameters:
     limit_param:
       name: limit

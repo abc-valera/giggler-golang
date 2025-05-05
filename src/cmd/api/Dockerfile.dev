@@ -1,0 +1,19 @@
+FROM golang:1.24-alpine
+
+ARG WORKDIR_PATH=/workspace
+WORKDIR ${WORKDIR_PATH}
+
+RUN apk --no-cache add curl
+
+RUN mkdir local
+
+COPY go.* .
+RUN go mod download
+
+COPY ./.config/air.toml ./.config/air.toml
+COPY ./src ./src
+
+ENV API_PORT=8080
+EXPOSE ${API_PORT}
+
+CMD ["go", "tool", "air", "-c", "./.config/air.toml"]

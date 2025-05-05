@@ -4,11 +4,9 @@ confidence = 0.8
 errorCode = 0
 warningCode = 0
 
+
 enableAllRules = true
 
-# Configure import blacklists for different layers
-# [imports-blacklist]
-#   arguments =["crypto/md5", "crypto/sha1"]
 
 [rule.add-constant] # Maybe enable it
 Disabled = true

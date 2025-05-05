@@ -1,0 +1,84 @@
+name: giggler-golang-dev
+
+services:
+  # Dependency Services
+  db:
+    image: postgres
+    env_file:
+      - ./env/.env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./external/infrastructure/migrations:/migrations
+    command: >
+      -path=/migrations/
+      -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SSLMODE}
+      up
+    depends_on:
+      db:
+        condition: service_healthy
+  # The API itself
+  api:
+    build:
+      context: .
+      dockerfile: ./src/cmd/api/Dockerfile.dev
+      args:
+        WORKDIR_PATH: ${PWD}
+    env_file:
+      - ./env/.env
+    environment:
+      BUILD_VERSION: ${BUILD_VERSION}
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - local:/workspace/local
+      - ./src:/workspace/src
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${API_PORT}/version"]
+      start_period: 60s
+      interval: 1s
+      timeout: 1s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  # Consumer Services
+  openapi:
+    build:
+      context: .
+      dockerfile: ./external/openapi/cmd/Dockerfile
+    ports:
+      - "${OPENAPI_PORT}:${OPENAPI_PORT}"
+    env_file:
+      - ./env/.env
+    depends_on:
+      api:
+        condition: service_healthy
+  grafana:
+    image: grafana/grafana-oss
+    restart: unless-stopped
+    # if you are running as root then set it to 0
+    # else find the right id with the id -u command
+    user: "0"
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana:/var/lib/grafana
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  local:
+  postgres:
+  grafana:

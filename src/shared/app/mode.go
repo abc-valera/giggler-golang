@@ -8,7 +8,7 @@ var modeVar = initMode()
 
 func initMode() mode {
 	switch modeEnv := mode(env.Load("APP_MODE")); modeEnv {
-	case dev, prod, test:
+	case dev, release, test:
 		return modeEnv
 	default:
 		panic("APP_MODE env var is invalid")
@@ -22,17 +22,17 @@ func Mode() mode {
 type mode string
 
 var (
-	dev  mode = "dev"
-	prod mode = "prod"
-	test mode = "test"
+	dev     mode = "dev"
+	release mode = "release"
+	test    mode = "test"
 )
 
 func (m mode) IsDev() bool {
 	return m == dev
 }
 
-func (m mode) IsProd() bool {
-	return m == prod
+func (m mode) IsRelease() bool {
+	return m == release
 }
 
 func (m mode) IsTest() bool {
