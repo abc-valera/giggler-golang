@@ -1,0 +1,5 @@
+DROP INDEX IF EXISTS idx_user_joke_title;
+
+DROP TABLE IF EXISTS jokes;
+
+DROP TABLE IF EXISTS users;

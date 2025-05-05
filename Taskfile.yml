@@ -3,21 +3,75 @@
 version: "3"
 
 env:
-  VERSION: git rev-parse --short=4 HEAD
+  BUILD_VERSION:
+    sh: git rev-parse --short=4 HEAD
 dotenv: ["env/.env"]
 
 tasks:
-  build:dockerimage:
-    cmd: docker build -t giggler-golang -f ./config/dockerfile .
+  default:
+    cmd: task --list-all
 
-  start:dev:
-    cmd: go tool air -c ./config/air.toml
+  release:build:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.release.yaml
+      --project-directory ./
+      build
 
-  start:dev:dockerimage:
-    cmd: docker run
-      --env-file ./env/.env
-      -p 3000:3000
-      --rm -it giggler-golang
+  release:up:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.release.yaml
+      --project-directory ./
+      up
+
+  release:down:
+    prompt: This is a dangerous command... Do you want to continue?
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.release.yaml
+      --project-directory ./
+      down
+
+  release:start:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.release.yaml
+      --project-directory ./
+      start
+
+  release:stop:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.release.yaml
+      --project-directory ./
+      stop
+
+  dev:build:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.dev.yaml
+      --project-directory ./
+      build
+
+  dev:up:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.dev.yaml
+      --project-directory ./
+      up
+
+  dev:down:
+    prompt: This is a dangerous command... Do you want to continue?
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.dev.yaml
+      --project-directory ./
+      down
+
+  dev:start:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.dev.yaml
+      --project-directory ./
+      start
+
+  dev:stop:
+    cmd: docker compose
+      -f ./external/infrastructure/docker-compose.dev.yaml
+      --project-directory ./
+      stop
 
   pprof:cpu:
     cmd: go tool pprof -http=:3010 "$URL/debug/pprof/profile"
@@ -37,36 +91,24 @@ tasks:
   pprof:goroutine:
     cmd: go tool pprof -http=:3010 "$URL/debug/pprof/goroutine"
 
-  local:clear:
-    cmd: rm -r ./local/*
-
-  sqlite:init:
-    cmd: go run ./external/sqlite/migrate.go
-
   gorm:generate:
     cmd: go run ./src/cmd/gormgen
 
   openapi:lint:
-    cmd: npx redocly lint ./src/openapi.yaml
+    cmd: npx redocly lint ./external/openapi/cmd/openapi.yaml
 
   openapi:bundle:
     cmd: npx redocly bundle
-      -o ./external/openapi/bundle.yaml
-      ./external/openapi/src/openapi.yaml
-
-  openapi:serve-docs:
-    env:
-      OPENAPI_DOCS_PORT: 3001
-    cmd: go run ./external/openapi/docs.go
+      -o ./external/openapi/cmd/bundle.yaml
+      ./external/openapi/cmd/openapi.yaml
 
   view:generate:
     cmd: go tool ogen
       --package viewgen
       --target ./src/shared/view/viewgen
-      --clean ./external/openapi/bundle.yaml
+      --clean ./external/openapi/cmd/bundle.yaml
 
   k6:generate:
-    cmd: npx openapi-to-k6 -v --include-sample-script ./external/openapi/bundle.yaml test/
-
-  grafana:start:
-    cmd: docker compose -f ./config/docker-compose.grafana.yaml up -d
+    cmd: npx openapi-to-k6 -v
+      --include-sample-script ./external/openapi/cmd/bundle.yaml
+      test/

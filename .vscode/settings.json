@@ -18,7 +18,7 @@
 
   "go.lintOnSave": "workspace",
   "go.lintTool": "revive",
-  "go.lintFlags": ["-config", "./config/revive.toml"],
+  "go.lintFlags": ["-config", "./.config/revive.toml"],
 
   "[sql]": {
     "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"

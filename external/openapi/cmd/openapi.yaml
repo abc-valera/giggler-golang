@@ -21,14 +21,14 @@ components:
       bearerFormat: JWT
 paths:
   /auth/register:
-    $ref: features/auth/path_auth_register.yaml
+    $ref: ../features/auth/path_auth_register.yaml
   /auth/login:
-    $ref: features/auth/path_auth_login.yaml
+    $ref: ../features/auth/path_auth_login.yaml
   /auth/refresh:
-    $ref: features/auth/path_auth_refresh.yaml
+    $ref: ../features/auth/path_auth_refresh.yaml
   /user:
-    $ref: features/user/path_user.yaml
+    $ref: ../features/user/path_user.yaml
   /user/jokes:
-    $ref: features/user/path_user_jokes.yaml
+    $ref: ../features/user/path_user_jokes.yaml
   /jokes:
-    $ref: features/joke/path_jokes.yaml
+    $ref: ../features/joke/path_jokes.yaml
