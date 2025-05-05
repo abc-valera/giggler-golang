@@ -17,8 +17,9 @@ go mod download
 # Pull docker images
 echo "Pulling docker images 🐳 (It can take even more time.....)"
 
-docker pull golang:1.24-alpine
+docker pull golang:1.24
 docker pull alpine
+docker pull postgres
 docker pull grafana/grafana-oss
 docker pull grafana/k6
 docker pull openapitools/openapi-generator-cli

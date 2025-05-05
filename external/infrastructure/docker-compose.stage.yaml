@@ -1,0 +1,85 @@
+services:
+  api:
+    container_name: giggler-golang-stage_api
+    build:
+      context: .
+      dockerfile: ./src/cmd/api/Dockerfile.stage
+      args:
+        WORKDIR_PATH: ${PWD}
+    env_file:
+      - ./env/.env
+    environment:
+      VERSION: ${VERSION}
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - giggler-golang-stage_local:/workspace/local
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${API_PORT}/version"]
+      start_period: 3s
+      start_interval: 1s
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  # Dependency Services
+  db:
+    container_name: giggler-golang-stage_db
+    image: postgres
+    env_file:
+      - ./env/.env
+    volumes:
+      - giggler-golang-stage_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+  migrate:
+    container_name: giggler-golang-stage_migrate
+    image: migrate/migrate
+    volumes:
+      - ./external/infrastructure/migrations:/migrations
+    command: >
+      -path=/migrations/
+      -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SSLMODE}
+      up
+    depends_on:
+      db:
+        condition: service_healthy
+  # Consumer Services
+  openapi:
+    container_name: giggler-golang-stage_openapi
+    build:
+      context: .
+      dockerfile: ./external/openapi/cmd/Dockerfile
+    ports:
+      - "${OPENAPI_PORT}:${OPENAPI_PORT}"
+    env_file:
+      - ./env/.env
+    depends_on:
+      api:
+        condition: service_healthy
+  grafana:
+    container_name: giggler-golang-stage_grafana
+    image: grafana/grafana-oss
+    restart: unless-stopped
+    # if you are running as root then set it to 0
+    # else find the right id with the id -u command
+    user: "0"
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - giggler-golang-stage_grafana:/var/lib/grafana
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  giggler-golang-stage_local:
+  giggler-golang-stage_postgres:
+  giggler-golang-stage_grafana:
