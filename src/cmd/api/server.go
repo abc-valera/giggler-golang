@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/pprof"
 
+	"giggler-golang/src/features/auth/authJWT"
 	"giggler-golang/src/features/auth/authView"
 	"giggler-golang/src/features/joke/jokeView"
 	"giggler-golang/src/features/user/userView"
@@ -73,10 +74,10 @@ var handler viewgen.Handler = struct {
 type securityHandler struct{}
 
 func (securityHandler) HandleBearerAuth(ctx context.Context, _ string, t viewgen.BearerAuth) (context.Context, error) {
-	payload, err := authView.ViewVerifyToken(t.Token)
+	p, err := authJWT.VerifyToken(t.Token)
 	if err != nil {
 		return ctx, err
 	}
 
-	return contexts.SetUserID(ctx, payload.UserID), nil
+	return contexts.SetUserID(ctx, p.UserID), nil
 }

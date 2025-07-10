@@ -5,6 +5,7 @@ import (
 
 	"go.opentelemetry.io/otel/trace"
 
+	"giggler-golang/src/features/auth/authJWT"
 	"giggler-golang/src/features/auth/internal"
 	"giggler-golang/src/features/user/userDTO"
 	"giggler-golang/src/shared/otel"
@@ -39,12 +40,18 @@ func (Handler) AuthLoginPost(ctx context.Context, req *viewgen.AuthLoginPostReq)
 		return nil, err
 	}
 
-	access, err := viewCreateAccessToken(loggedUser.ID)
+	access, err := authJWT.CreateToken(authJWT.Payload{
+		UserID:    loggedUser.ID,
+		IsRefresh: false,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	refresh, err := viewCreateRefreshToken(loggedUser.ID)
+	refresh, err := authJWT.CreateToken(authJWT.Payload{
+		UserID:    loggedUser.ID,
+		IsRefresh: true,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -60,16 +67,19 @@ func (Handler) AuthRefreshPost(ctx context.Context, req *viewgen.AuthRefreshPost
 	_, span := otel.Trace(ctx)
 	defer span.End()
 
-	payload, err := ViewVerifyToken(req.RefreshToken)
+	payload, err := authJWT.VerifyToken(req.RefreshToken)
 	if err != nil {
 		return nil, err
 	}
 
 	if !payload.IsRefresh {
-		return nil, errProvidedAccessToken
+		return nil, authJWT.ErrProvidedAccessToken
 	}
 
-	access, err := viewCreateAccessToken(payload.UserID)
+	access, err := authJWT.CreateToken(authJWT.Payload{
+		UserID:    payload.UserID,
+		IsRefresh: false,
+	})
 	if err != nil {
 		return nil, err
 	}

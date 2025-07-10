@@ -7,10 +7,19 @@
   "go.testTimeout": "5s",
 
   "go.useLanguageServer": true,
+
+  // gopls is the language server for Go.
+  // It also has checks which are executed automatically by the IDE,
+  // and can be used manually with:
+  // find . -name "*.go" | xargs gopls check
   "gopls": {
     "ui.semanticTokens": true,
 
+    // gofumpt is a stricter version of gofmt. It's ran automatically on save.
+    // It can be executed from the command line with:
+    // gofumpt -w .
     "formatting.gofumpt": true,
+
     // Can be executed from the command line with:
     // goimports -w -local "giggler-golang" .
     "formatting.local": "giggler-golang",
