@@ -15,10 +15,10 @@ func Must[T any](val T, err error) T {
 	return val
 }
 
-// NoEmpty panics if the provided value is empty/nil
+// NoEmpty panics if the provided value is zero
 func NoEmpty[T comparable](val T) T {
-	var nullValue T
-	if val == nullValue {
+	var zeroValue T
+	if val == zeroValue {
 		panic("empty value")
 	}
 	return val

@@ -15,7 +15,7 @@ import (
 	"giggler-golang/src/shared/env"
 	"giggler-golang/src/shared/errutil"
 	"giggler-golang/src/shared/errutil/errutilView"
-	"giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/otel/otelView"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
@@ -38,7 +38,7 @@ func initServer() http.Server {
 	var handler http.Handler = errutil.Must(viewgen.NewServer(handler, securityHandler{}))
 	handler = applyCorsMiddleware(handler)
 	handler = ApplyLogMiddleware(handler)
-	handler = otel.ApplyTracerMiddleware(handler)
+	handler = otelView.ApplyTracerMiddleware(handler)
 	handler = applyRecovererMiddleware(handler)
 
 	mux.Handle("/", handler)

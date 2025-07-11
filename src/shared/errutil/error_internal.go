@@ -2,30 +2,22 @@ package errutil
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 )
 
-type internal struct {
-	caller string // Caller provides additional context about error's location
-	err    error  // Err is a nested error
+type internalError struct {
+	caller string // caller provides additional context about error's location
+	err    error  // err is a nested error
 }
 
-func NewInternalErr(err error) error {
-	return &internal{
+func NewInternal(err error) error {
+	return internalError{
 		caller: caller(2),
 		err:    err,
 	}
 }
 
-func NewInternalString(err string) error {
-	return &internal{
-		caller: caller(2),
-		err:    errors.New(err),
-	}
-}
-
-func (e *internal) Error() string {
+func (e internalError) Error() string {
 	var buf bytes.Buffer
 
 	fmt.Fprintf(&buf, "%s ", e.caller)

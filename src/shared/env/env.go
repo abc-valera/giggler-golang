@@ -10,7 +10,7 @@ import (
 var ErrInvalidEnvValue = errors.New("invalid env value")
 
 // Load is a shortcut for trimming and empty-cheking environemnt variables.
-// If the env var is not set, it will exit.
+// Panics if the env var is not set.
 func Load(key string) string {
 	env, ok := os.LookupEnv(key)
 	if !ok {
@@ -20,6 +20,11 @@ func Load(key string) string {
 	return strings.TrimSpace(env)
 }
 
+// LoadBool calls Load and casts the value to the boolean type.
+//
+// Possible values:
+//   - true
+//   - false
 func LoadBool(key string) bool {
 	switch strings.ToLower(Load(key)) {
 	case "true":
@@ -31,6 +36,7 @@ func LoadBool(key string) bool {
 	}
 }
 
+// LoadDuration calls Load and parses the duration.
 func LoadDuration(key string) time.Duration {
 	dur, err := time.ParseDuration(Load(key))
 	if err != nil {

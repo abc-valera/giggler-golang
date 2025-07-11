@@ -2,7 +2,7 @@ package jokeDTO
 
 import (
 	"giggler-golang/src/features/joke/jokeModel"
-	"giggler-golang/src/shared/view/viewDto"
+	"giggler-golang/src/shared/view/viewDTO"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
@@ -12,7 +12,7 @@ func NewViewDTO(joke jokeModel.Joke) *viewgen.JokeSchema {
 		UserID:      joke.UserID,
 		Title:       joke.Title,
 		Text:        joke.Text,
-		Explanation: viewDto.NewOptString(joke.Explanation),
+		Explanation: viewDTO.NewOptString(joke.Explanation),
 		CreatedAt:   joke.CreatedAt,
 	}
 }

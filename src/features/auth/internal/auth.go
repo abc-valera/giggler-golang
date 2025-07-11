@@ -6,7 +6,7 @@ import (
 
 	"go.opentelemetry.io/otel/trace"
 
-	"giggler-golang/src/features/auth/passworder"
+	"giggler-golang/src/features/auth/authPassword"
 	"giggler-golang/src/features/user/userData"
 	"giggler-golang/src/features/user/userModel"
 	"giggler-golang/src/shared/data"
@@ -76,8 +76,8 @@ func AuthLogin(ctx context.Context, req AuthLoginReq) (userModel.User, error) {
 		return userModel.User{}, err
 	}
 
-	if !passworder.IsReal(ctx, req.Password, foundUser.HashedPassword) {
-		return userModel.User{}, passworder.ErrInvalidPass
+	if !authPassword.IsReal(ctx, req.Password, foundUser.HashedPassword) {
+		return userModel.User{}, authPassword.ErrInvalidPass
 	}
 
 	return foundUser, nil

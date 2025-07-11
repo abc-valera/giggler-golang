@@ -2,7 +2,7 @@ package userDTO
 
 import (
 	"giggler-golang/src/features/user/userModel"
-	"giggler-golang/src/shared/view/viewDto"
+	"giggler-golang/src/shared/view/viewDTO"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
@@ -11,8 +11,8 @@ func NewView(user userModel.User) *viewgen.UserSchema {
 		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,
-		Fullname:  viewDto.NewOptString(user.Fullname),
-		Status:    viewDto.NewOptString(user.Fullname),
+		Fullname:  viewDTO.NewOptString(user.Fullname),
+		Status:    viewDTO.NewOptString(user.Fullname),
 		CreatedAt: user.CreatedAt,
 	}
 }

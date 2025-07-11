@@ -10,7 +10,7 @@ import (
 	"giggler-golang/src/shared/contexts"
 	"giggler-golang/src/shared/data"
 	"giggler-golang/src/shared/otel"
-	"giggler-golang/src/shared/view/viewDto"
+	"giggler-golang/src/shared/view/viewDTO"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
@@ -33,7 +33,7 @@ func (Handler) JokesPost(ctx context.Context, req *viewgen.JokesPostReq) (*viewg
 	createdJoke, err := jokeData.NewCommand(data.DB()).Create(ctx, jokeData.CreateReq{
 		Title:       req.Title,
 		Text:        req.Text,
-		Explanation: viewDto.NewDomainPointer(req.Explanation),
+		Explanation: viewDTO.NewDomainPointer(req.Explanation),
 
 		UserID: userID,
 	})
@@ -51,9 +51,9 @@ func (Handler) JokesPut(ctx context.Context, req *viewgen.JokesPutReq) (*viewgen
 
 	updatedJoke, err := jokeData.NewCommand(data.DB()).Update(ctx, jokeData.UpdateReq{
 		ID:          req.JokeID,
-		Title:       viewDto.NewDomainPointer(req.Title),
-		Text:        viewDto.NewDomainPointer(req.Text),
-		Explanation: viewDto.NewDomainPointer(req.Explanation),
+		Title:       viewDTO.NewDomainPointer(req.Title),
+		Text:        viewDTO.NewDomainPointer(req.Text),
+		Explanation: viewDTO.NewDomainPointer(req.Explanation),
 	})
 	if err != nil {
 		return nil, err

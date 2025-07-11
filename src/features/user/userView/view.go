@@ -10,7 +10,7 @@ import (
 	"giggler-golang/src/shared/contexts"
 	"giggler-golang/src/shared/data"
 	"giggler-golang/src/shared/otel"
-	"giggler-golang/src/shared/view/viewDto"
+	"giggler-golang/src/shared/view/viewDTO"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
@@ -45,9 +45,9 @@ func (Handler) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.U
 
 	user, err := userData.NewCommand(data.DB()).Update(ctx, userData.UpdateReq{
 		ID:       userID,
-		Password: viewDto.NewDomainPointer(req.Password),
-		Fullname: viewDto.NewDomainPointer(req.Fullname),
-		Status:   viewDto.NewDomainPointer(req.Status),
+		Password: viewDTO.NewDomainPointer(req.Password),
+		Fullname: viewDTO.NewDomainPointer(req.Fullname),
+		Status:   viewDTO.NewDomainPointer(req.Status),
 	})
 	if err != nil {
 		return nil, err

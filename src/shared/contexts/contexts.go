@@ -2,6 +2,7 @@ package contexts
 
 import (
 	"context"
+	"errors"
 
 	"giggler-golang/src/shared/errutil"
 )
@@ -17,7 +18,7 @@ func SetUserID(ctx context.Context, userID string) context.Context {
 func GetUserID(ctx context.Context) (string, error) {
 	userID, ok := ctx.Value(userIDKey).(string)
 	if !ok {
-		return "", errutil.NewInternalString("UserID not found in context")
+		return "", errutil.NewInternal(errors.New("UserID not found in context"))
 	}
 	return userID, nil
 }

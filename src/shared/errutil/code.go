@@ -2,8 +2,6 @@ package errutil
 
 import "errors"
 
-// codeerr package provides a way to represent errors as a code and a message.
-
 const (
 	// VALIDATION CODES
 
@@ -39,16 +37,16 @@ type Code string
 
 // ErrorCode returns the code of the root error, if available, otherwise returns Internal.
 func ErrorCode(err error) Code {
-	var messageErrTarget *codeMessage
-	var internalErrTarget *internal
+	var messageErrTarget *codeError
+	var internalErrTarget *internalError
 	if err == nil {
 		return ""
-	} else if e, ok := err.(*codeMessage); ok && e.Code != "" {
-		return e.Code
-	} else if _, ok := err.(*internal); ok {
+	} else if e, ok := err.(*codeError); ok && e.code != "" {
+		return e.code
+	} else if _, ok := err.(*internalError); ok {
 		return CodeInternal
 	} else if errors.As(err, &messageErrTarget) {
-		return messageErrTarget.Code
+		return messageErrTarget.code
 	} else if errors.As(err, &internalErrTarget) {
 		return CodeInternal
 	}

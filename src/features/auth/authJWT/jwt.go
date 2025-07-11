@@ -1,6 +1,7 @@
 package authJWT
 
 import (
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -10,9 +11,9 @@ import (
 )
 
 var (
-	ErrInvalidToken        = errutil.NewCodeMessage(errutil.CodeUnauthenticated, "Provided invalid token")
-	ErrExpiredToken        = errutil.NewCodeMessage(errutil.CodeUnauthenticated, "Provided expired token")
-	ErrProvidedAccessToken = errutil.NewCodeMessage(errutil.CodeUnauthenticated, "Provided access token")
+	ErrInvalidToken        = errutil.NewCode(errutil.CodeUnauthenticated, errors.New("provided invalid token"))
+	ErrExpiredToken        = errutil.NewCode(errutil.CodeUnauthenticated, errors.New("provided expired token"))
+	ErrProvidedAccessToken = errutil.NewCode(errutil.CodeUnauthenticated, errors.New("provided access token"))
 
 	jwtSignKey = func() string {
 		key := env.Load("JWT_SIGN_KEY")
@@ -48,7 +49,7 @@ func CreateToken(p Payload) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(jwtSignKey))
 	if err != nil {
-		return "", errutil.NewInternalErr(err)
+		return "", errutil.NewInternal(err)
 	}
 
 	return tokenString, nil

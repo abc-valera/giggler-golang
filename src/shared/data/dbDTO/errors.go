@@ -16,14 +16,14 @@ func CommandError(res *gorm.DB) error {
 	}
 
 	if errors.Is(err, gorm.ErrCheckConstraintViolated) {
-		return errutil.NewCodeError(errutil.CodeInvalidArgument, err)
+		return errutil.NewCode(errutil.CodeInvalidArgument, err)
 	}
 
 	if errors.Is(err, gorm.ErrDuplicatedKey) {
-		return errutil.NewCodeError(errutil.CodeAlreadyExists, err)
+		return errutil.NewCode(errutil.CodeAlreadyExists, err)
 	}
 
-	return errutil.NewInternalErr(err)
+	return errutil.NewInternal(err)
 }
 
 func QueryError(err error) error {
@@ -32,8 +32,8 @@ func QueryError(err error) error {
 	}
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return errutil.NewCodeError(errutil.CodeNotFound, err)
+		return errutil.NewCode(errutil.CodeNotFound, err)
 	}
 
-	return errutil.NewInternalErr(err)
+	return errutil.NewInternal(err)
 }

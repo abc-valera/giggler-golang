@@ -1,6 +1,4 @@
-package enum
-
-// Interface is the interface that all enums should implement.
+// Package enum provides a helper interface for enums validation.
 //
 // # All Enums should be defined in the following ways
 //
@@ -46,6 +44,9 @@ package enum
 //
 //	// This is to ensure that the Status type implements the Interface interface
 //	var _ enum.Interface = (*Mood)(nil)
+package enum
+
+// Interface is the interface that all enums should implement.
 type Interface interface {
 	IsValid() bool
 }

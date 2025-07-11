@@ -36,7 +36,7 @@ func (d db) getDbInstance() *gorm.DB {
 func (d db) NewTX() (ITX, error) {
 	gormTX := d.gormDB.Begin()
 	if gormTX.Error != nil {
-		return nil, errutil.NewInternalErr(gormTX.Error)
+		return nil, errutil.NewInternal(gormTX.Error)
 	}
 	return &tx{gormTX: gormTX}, nil
 }
@@ -69,17 +69,17 @@ type tx struct {
 func (t tx) NewTX() (ITX, error) {
 	gormTX := t.gormTX.Begin()
 	if gormTX.Error != nil {
-		return nil, errutil.NewInternalErr(gormTX.Error)
+		return nil, errutil.NewInternal(gormTX.Error)
 	}
 	return &tx{gormTX: gormTX}, nil
 }
 
 func (t tx) Commit() error {
-	return errutil.NewInternalErr(t.gormTX.Commit().Error)
+	return errutil.NewInternal(t.gormTX.Commit().Error)
 }
 
 func (t tx) Rollback() error {
-	return errutil.NewInternalErr(t.gormTX.Rollback().Error)
+	return errutil.NewInternal(t.gormTX.Rollback().Error)
 }
 
 func (t tx) WithinTX(ctx context.Context, txFunc func(ctx context.Context, tx IDB) error) error {

@@ -1,4 +1,4 @@
-package viewDto
+package viewDTO
 
 import (
 	"giggler-golang/src/shared/data/dataModel"

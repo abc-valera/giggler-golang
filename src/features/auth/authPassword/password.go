@@ -1,4 +1,4 @@
-package passworder
+package authPassword
 
 import (
 	"context"
@@ -16,8 +16,9 @@ import (
 	"giggler-golang/src/shared/otel"
 )
 
-var ErrInvalidPass = errutil.NewCodeMessage(errutil.CodeInvalidArgument, "invalid password")
+var ErrInvalidPass = errutil.NewCode(errutil.CodeInvalidArgument, errors.New("invalid password"))
 
+// TODO: move this to env file
 const (
 	hashMemory      uint32 = 64 * 1024
 	hashIterations  uint32 = 3

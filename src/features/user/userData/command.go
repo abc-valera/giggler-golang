@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
 
-	"giggler-golang/src/features/auth/passworder"
+	"giggler-golang/src/features/auth/authPassword"
 	"giggler-golang/src/features/user/userDTO"
 	"giggler-golang/src/features/user/userModel"
 	"giggler-golang/src/shared/data"
@@ -48,7 +48,7 @@ func (c command) Create(ctx context.Context, req CreateReq) (userModel.User, err
 		ID:             uuid.New().String(),
 		Username:       req.Username,
 		Email:          req.Email,
-		HashedPassword: passworder.Hash(ctx, req.Password),
+		HashedPassword: authPassword.Hash(ctx, req.Password),
 		Fullname:       req.Fullname,
 		Status:         req.Status,
 		CreatedAt:      time.Now().Truncate(time.Millisecond).Local(),
@@ -87,7 +87,7 @@ func (c command) Update(ctx context.Context, req UpdateReq) (userModel.User, err
 
 	if req.Password != nil {
 		span.AddEvent("Hashing Password Start")
-		user.HashedPassword = passworder.Hash(ctx, *req.Password)
+		user.HashedPassword = authPassword.Hash(ctx, *req.Password)
 		span.AddEvent("Hashing Password End")
 	}
 
@@ -127,8 +127,8 @@ func (c command) Delete(ctx context.Context, req DeleteReq) error {
 
 	span.AddEvent("Checking Password Start")
 
-	if !passworder.IsReal(ctx, req.Password, user.HashedPassword) {
-		return passworder.ErrInvalidPass
+	if !authPassword.IsReal(ctx, req.Password, user.HashedPassword) {
+		return authPassword.ErrInvalidPass
 	}
 
 	span.AddEvent("Checking Password End")

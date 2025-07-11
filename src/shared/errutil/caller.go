@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// caller returns the string representation of the caller function
+// caller returns the string representation of the caller function in human-readable format
 func caller(skip int) string {
 	// Get the caller
 	_, file, line, _ := runtime.Caller(skip)

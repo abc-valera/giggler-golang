@@ -1,3 +1,11 @@
+// Package serviceLocator provides a simple implementation of the eponymous design pattern.
+// It is used as a dependency injection mechanism.
+//
+// The so called services can be added and pulled by their type.
+// This means that only one service can be stored per type.
+//
+// The package should be 'disabled' by using the Disable() function
+// in the start of the main function to prevent undesirable access.
 package serviceLocator
 
 import (
