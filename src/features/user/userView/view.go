@@ -3,8 +3,6 @@ package userView
 import (
 	"context"
 
-	"go.opentelemetry.io/otel/trace"
-
 	"giggler-golang/src/features/user/userData"
 	"giggler-golang/src/shared/contexts"
 	"giggler-golang/src/shared/data"
@@ -16,8 +14,7 @@ import (
 type Handler struct{}
 
 func (Handler) UserGet(ctx context.Context) (*viewgen.UserSchema, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	userID, err := contexts.GetUserID(ctx)
@@ -33,8 +30,7 @@ func (Handler) UserGet(ctx context.Context) (*viewgen.UserSchema, error) {
 }
 
 func (Handler) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.UserSchema, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	userID, err := contexts.GetUserID(ctx)
@@ -55,8 +51,7 @@ func (Handler) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.U
 }
 
 func (Handler) UserDel(ctx context.Context, req *viewgen.UserDelReq) error {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	userID, err := contexts.GetUserID(ctx)

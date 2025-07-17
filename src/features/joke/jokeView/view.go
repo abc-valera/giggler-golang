@@ -3,8 +3,6 @@ package jokeView
 import (
 	"context"
 
-	"go.opentelemetry.io/otel/trace"
-
 	"giggler-golang/src/features/joke/jokeData"
 	"giggler-golang/src/shared/contexts"
 	"giggler-golang/src/shared/data"
@@ -20,8 +18,7 @@ func (Handler) JokesGet(ctx context.Context, params viewgen.JokesGetParams) (vie
 }
 
 func (Handler) JokesPost(ctx context.Context, req *viewgen.JokesPostReq) (*viewgen.JokeSchema, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	userID, err := contexts.GetUserID(ctx)
@@ -44,8 +41,7 @@ func (Handler) JokesPost(ctx context.Context, req *viewgen.JokesPostReq) (*viewg
 }
 
 func (Handler) JokesPut(ctx context.Context, req *viewgen.JokesPutReq) (*viewgen.JokeSchema, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	updatedJoke, err := jokeData.NewCommand(data.DB()).Update(ctx, jokeData.UpdateReq{

@@ -5,10 +5,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 
-	"giggler-golang/src/features/auth/authPassword"
+	"giggler-golang/src/features/user/userPassword"
 	"giggler-golang/src/shared/data/dataModel"
 	"giggler-golang/src/shared/data/dbgen/gormModel"
 	"giggler-golang/src/shared/otel"
@@ -36,8 +35,7 @@ type CreateReq struct {
 }
 
 func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.User, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	if err := validate.Struct(req); err != nil {
@@ -48,7 +46,7 @@ func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.User, er
 		ID:             uuid.New().String(),
 		Username:       req.Username,
 		Email:          req.Email,
-		HashedPassword: authPassword.Hash(ctx, req.Password),
+		HashedPassword: userPassword.Hash(ctx, req.Password),
 		Fullname:       req.Fullname,
 		Status:         req.Status,
 		CreatedAt:      time.Now().Truncate(time.Millisecond).Local(),
@@ -69,8 +67,7 @@ type UpdateReq struct {
 }
 
 func (c command) Update(ctx context.Context, req UpdateReq) (*gormModel.User, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	if err := validate.Struct(req); err != nil {
@@ -87,7 +84,7 @@ func (c command) Update(ctx context.Context, req UpdateReq) (*gormModel.User, er
 
 	if req.Password != nil {
 		span.AddEvent("Hashing Password Start")
-		user.HashedPassword = authPassword.Hash(ctx, *req.Password)
+		user.HashedPassword = userPassword.Hash(ctx, *req.Password)
 		span.AddEvent("Hashing Password End")
 	}
 
@@ -112,8 +109,7 @@ type DeleteReq struct {
 }
 
 func (c command) Delete(ctx context.Context, req DeleteReq) error {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	if err := validate.Struct(req); err != nil {
@@ -127,8 +123,8 @@ func (c command) Delete(ctx context.Context, req DeleteReq) error {
 
 	span.AddEvent("Checking Password Start")
 
-	if !authPassword.IsReal(ctx, req.Password, user.HashedPassword) {
-		return authPassword.ErrInvalidPass
+	if !userPassword.IsReal(ctx, req.Password, user.HashedPassword) {
+		return userPassword.ErrInvalidPass
 	}
 
 	span.AddEvent("Checking Password End")

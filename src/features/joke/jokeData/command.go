@@ -10,7 +10,6 @@ import (
 	"giggler-golang/src/shared/validate"
 
 	"github.com/google/uuid"
-	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 )
 
@@ -35,8 +34,7 @@ type CreateReq struct {
 }
 
 func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.Joke, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	if err := validate.Struct(req); err != nil {
@@ -67,8 +65,7 @@ type UpdateReq struct {
 }
 
 func (c command) Update(ctx context.Context, req UpdateReq) (*gormModel.Joke, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	if err := validate.Struct(req); err != nil {
@@ -103,8 +100,7 @@ func (c command) Update(ctx context.Context, req UpdateReq) (*gormModel.Joke, er
 }
 
 func (c command) Delete(ctx context.Context, id string) error {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	return c.dbCommand.Delete(ctx, &gormModel.Joke{ID: id})

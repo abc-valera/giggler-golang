@@ -3,11 +3,9 @@ package internal
 import (
 	"context"
 
-	"go.opentelemetry.io/otel/trace"
-
 	"giggler-golang/src/features/auth/authJWT"
-	"giggler-golang/src/features/auth/authPassword"
 	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/features/user/userPassword"
 	"giggler-golang/src/shared/data"
 	"giggler-golang/src/shared/data/dbgen/gormModel"
 	"giggler-golang/src/shared/otel"
@@ -25,8 +23,7 @@ type LoginResp struct {
 }
 
 func Login(ctx context.Context, req LoginReq) (LoginResp, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	foundUser, err := userData.NewQuery(data.DB()).GetByEmail(ctx, req.Email)
@@ -34,8 +31,8 @@ func Login(ctx context.Context, req LoginReq) (LoginResp, error) {
 		return LoginResp{}, err
 	}
 
-	if !authPassword.IsReal(ctx, req.Password, foundUser.HashedPassword) {
-		return LoginResp{}, authPassword.ErrInvalidPass
+	if !userPassword.IsReal(ctx, req.Password, foundUser.HashedPassword) {
+		return LoginResp{}, userPassword.ErrInvalidPass
 	}
 
 	access, err := authJWT.CreateToken(authJWT.Payload{

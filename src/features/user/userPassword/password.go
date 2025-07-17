@@ -1,4 +1,4 @@
-package authPassword
+package userPassword
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"strings"
 
-	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/crypto/argon2"
 
 	"giggler-golang/src/shared/errutil"
@@ -28,8 +27,7 @@ const (
 )
 
 func Hash(ctx context.Context, password string) string {
-	var span trace.Span
-	_, span = otel.Trace(ctx)
+	_, span := otel.Trace(ctx)
 	defer span.End()
 
 	// Generate a cryptographically secure random salt.
@@ -51,8 +49,7 @@ func Hash(ctx context.Context, password string) string {
 
 // IsReal returns true if the password matches provided hash.
 func IsReal(ctx context.Context, pass, hashedPass string) bool {
-	var span trace.Span
-	_, span = otel.Trace(ctx)
+	_, span := otel.Trace(ctx)
 	defer span.End()
 
 	// Extract the parameters, salt and derived key from the encoded password hash.

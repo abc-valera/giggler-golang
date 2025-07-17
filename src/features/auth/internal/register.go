@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 
 	"giggler-golang/src/features/user/userData"
@@ -21,8 +20,7 @@ type RegisterReq struct {
 }
 
 func Register(ctx context.Context, req RegisterReq) (*gormModel.User, error) {
-	var span trace.Span
-	ctx, span = otel.Trace(ctx)
+	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
 	var u *gormModel.User
