@@ -32,7 +32,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./src/cmd/api/Dockerfile.release
+      dockerfile: ./src/cmd/restApi/Dockerfile.release
       args:
         WORKDIR_PATH: ${PWD}
         BUILD_VERSION: ${BUILD_VERSION}
