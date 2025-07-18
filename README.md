@@ -4,7 +4,7 @@ _Work in progress_
 
 ## Description
 
-<img src="../external/designs/svg/logo.svg" width="120" align="left" style="margin-right: 20px">
+<img src="external/designs/svg/logo.svg" width="120" align="left" style="margin-right: 20px">
 
 **Giggler** is a social network based on the idea of sharing and discussing jokes. This repository contains the **REST API** for the social network.
 

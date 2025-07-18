@@ -2,6 +2,10 @@
   "todo-tree.highlights.enabled": false,
   "todo-tree.general.tags": ["TODO", "IDEA", "BUG", "DEBUG"],
 
+  "terminal.integrated.env.linux": {
+    "COMPOSE_FILE": "./config/docker-compose.yaml"
+  },
+
   "go.testEnvFile": "${workspaceFolder}/env/.test.env",
   "go.testFlags": ["-count=1"],
   "go.testTimeout": "5s",
