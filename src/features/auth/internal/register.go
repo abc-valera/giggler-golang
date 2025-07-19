@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 
 	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/features/user/userData/userRepo"
 	"giggler-golang/src/shared/data"
-	"giggler-golang/src/shared/data/dbgen/gormModel"
 	"giggler-golang/src/shared/email"
 	"giggler-golang/src/shared/otel"
 )
@@ -19,14 +19,14 @@ type RegisterReq struct {
 	Password string
 }
 
-func Register(ctx context.Context, req RegisterReq) (*gormModel.User, error) {
+func Register(ctx context.Context, req RegisterReq) (*userData.User, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
-	var u *gormModel.User
+	var u *userData.User
 	txFunc := func(tx *gorm.DB) error {
 		var err error
-		u, err = userData.NewCommand(tx).Create(ctx, userData.CreateReq{
+		u, err = userRepo.NewCommand(tx).Create(ctx, userRepo.CreateReq{
 			Username: req.Username,
 			Email:    req.Email,
 			Password: req.Password,

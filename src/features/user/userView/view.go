@@ -3,7 +3,7 @@ package userView
 import (
 	"context"
 
-	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/features/user/userData/userRepo"
 	"giggler-golang/src/shared/contexts"
 	"giggler-golang/src/shared/data"
 	"giggler-golang/src/shared/otel"
@@ -22,7 +22,7 @@ func (Handler) UserGet(ctx context.Context) (*viewgen.UserSchema, error) {
 		return nil, err
 	}
 
-	user, err := userData.NewQuery(data.DB()).GetByID(ctx, userID)
+	user, err := userRepo.NewQuery(data.DB()).GetByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (Handler) UserPut(ctx context.Context, req *viewgen.UserPutReq) (*viewgen.U
 		return nil, err
 	}
 
-	user, err := userData.NewCommand(data.DB()).Update(ctx, userData.UpdateReq{
+	user, err := userRepo.NewCommand(data.DB()).Update(ctx, userRepo.UpdateReq{
 		ID:       userID,
 		Password: viewDTO.NewDomainPointer(req.Password),
 		Fullname: viewDTO.NewDomainPointer(req.Fullname),
@@ -59,7 +59,7 @@ func (Handler) UserDel(ctx context.Context, req *viewgen.UserDelReq) error {
 		return err
 	}
 
-	return userData.NewCommand(data.DB()).Delete(ctx, userData.DeleteReq{
+	return userRepo.NewCommand(data.DB()).Delete(ctx, userRepo.DeleteReq{
 		ID:       userID,
 		Password: req.Password,
 	})

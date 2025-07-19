@@ -5,9 +5,9 @@ import (
 
 	"giggler-golang/src/features/auth/authJWT"
 	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/features/user/userData/userRepo"
 	"giggler-golang/src/features/user/userPassword"
 	"giggler-golang/src/shared/data"
-	"giggler-golang/src/shared/data/dbgen/gormModel"
 	"giggler-golang/src/shared/otel"
 )
 
@@ -17,7 +17,7 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	User         *gormModel.User
+	User         *userData.User
 	AccessToken  string
 	RefreshToken string
 }
@@ -26,7 +26,7 @@ func Login(ctx context.Context, req LoginReq) (LoginResp, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
-	foundUser, err := userData.NewQuery(data.DB()).GetByEmail(ctx, req.Email)
+	foundUser, err := userRepo.NewQuery(data.DB()).GetByEmail(ctx, req.Email)
 	if err != nil {
 		return LoginResp{}, err
 	}

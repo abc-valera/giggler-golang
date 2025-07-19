@@ -1,4 +1,4 @@
-package dbDTO
+package dbDto
 
 import (
 	"errors"

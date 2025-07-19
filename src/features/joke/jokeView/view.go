@@ -3,7 +3,7 @@ package jokeView
 import (
 	"context"
 
-	"giggler-golang/src/features/joke/jokeData"
+	"giggler-golang/src/features/joke/jokeData/jokeRepo"
 	"giggler-golang/src/shared/contexts"
 	"giggler-golang/src/shared/data"
 	"giggler-golang/src/shared/otel"
@@ -26,7 +26,7 @@ func (Handler) JokesPost(ctx context.Context, req *viewgen.JokesPostReq) (*viewg
 		return nil, err
 	}
 
-	createdJoke, err := jokeData.NewCommand(data.DB()).Create(ctx, jokeData.CreateReq{
+	createdJoke, err := jokeRepo.NewCommand(data.DB()).Create(ctx, jokeRepo.CreateReq{
 		Title:       req.Title,
 		Text:        req.Text,
 		Explanation: viewDTO.NewDomainPointer(req.Explanation),
@@ -44,7 +44,7 @@ func (Handler) JokesPut(ctx context.Context, req *viewgen.JokesPutReq) (*viewgen
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
-	updatedJoke, err := jokeData.NewCommand(data.DB()).Update(ctx, jokeData.UpdateReq{
+	updatedJoke, err := jokeRepo.NewCommand(data.DB()).Update(ctx, jokeRepo.UpdateReq{
 		ID:          req.JokeID,
 		Title:       viewDTO.NewDomainPointer(req.Title),
 		Text:        viewDTO.NewDomainPointer(req.Text),

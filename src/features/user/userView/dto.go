@@ -1,12 +1,12 @@
 package userView
 
 import (
-	"giggler-golang/src/shared/data/dbgen/gormModel"
+	"giggler-golang/src/features/user/userData"
 	"giggler-golang/src/shared/view/viewDTO"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
-func NewUserModel(user *gormModel.User) *viewgen.UserSchema {
+func NewUserModel(user *userData.User) *viewgen.UserSchema {
 	return &viewgen.UserSchema{
 		ID:        user.ID,
 		Username:  user.Username,

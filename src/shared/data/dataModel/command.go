@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"giggler-golang/src/shared/data/dbDTO"
+	"giggler-golang/src/shared/data/dbDto"
 )
 
 type (
@@ -49,13 +49,13 @@ func NewGenericCommand[GormModel any](db *gorm.DB) genericCommand[GormModel] {
 }
 
 func (command genericCommand[GormModel]) Create(ctx context.Context, model *GormModel) error {
-	return dbDTO.CommandError(command.db.WithContext(ctx).Create(model))
+	return dbDto.CommandError(command.db.WithContext(ctx).Create(model))
 }
 
 func (command genericCommand[GormModel]) Update(ctx context.Context, model *GormModel) error {
-	return dbDTO.CommandError(command.db.WithContext(ctx).Save(model))
+	return dbDto.CommandError(command.db.WithContext(ctx).Save(model))
 }
 
 func (command genericCommand[GormModel]) Delete(ctx context.Context, model *GormModel) error {
-	return dbDTO.CommandError(command.db.WithContext(ctx).Delete(model))
+	return dbDto.CommandError(command.db.WithContext(ctx).Delete(model))
 }

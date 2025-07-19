@@ -1,4 +1,4 @@
-package userData
+package userRepo
 
 import (
 	"context"
@@ -7,21 +7,21 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
+	"giggler-golang/src/features/user/userData"
 	"giggler-golang/src/features/user/userPassword"
 	"giggler-golang/src/shared/data/dataModel"
-	"giggler-golang/src/shared/data/dbgen/gormModel"
 	"giggler-golang/src/shared/otel"
 	"giggler-golang/src/shared/validate"
 )
 
 type command struct {
-	dbCommand dataModel.IGenericCommandCreateUpdateDelete[gormModel.User]
+	dbCommand dataModel.IGenericCommandCreateUpdateDelete[userData.User]
 	query     query
 }
 
 func NewCommand(db *gorm.DB) command {
 	return command{
-		dbCommand: dataModel.NewGenericCommand[gormModel.User](db),
+		dbCommand: dataModel.NewGenericCommand[userData.User](db),
 		query:     NewQuery(db),
 	}
 }
@@ -34,7 +34,7 @@ type CreateReq struct {
 	Status   *string `validate:"omitempty,max=128"`
 }
 
-func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.User, error) {
+func (c command) Create(ctx context.Context, req CreateReq) (*userData.User, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
@@ -42,7 +42,7 @@ func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.User, er
 		return nil, err
 	}
 
-	user := &gormModel.User{
+	user := &userData.User{
 		ID:             uuid.New().String(),
 		Username:       req.Username,
 		Email:          req.Email,
@@ -66,7 +66,7 @@ type UpdateReq struct {
 	Status   *string `validate:"omitempty,max=128"`
 }
 
-func (c command) Update(ctx context.Context, req UpdateReq) (*gormModel.User, error) {
+func (c command) Update(ctx context.Context, req UpdateReq) (*userData.User, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
@@ -129,5 +129,5 @@ func (c command) Delete(ctx context.Context, req DeleteReq) error {
 
 	span.AddEvent("Checking Password End")
 
-	return c.dbCommand.Delete(ctx, &gormModel.User{ID: req.ID})
+	return c.dbCommand.Delete(ctx, &userData.User{ID: req.ID})
 }

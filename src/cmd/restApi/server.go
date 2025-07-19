@@ -44,7 +44,7 @@ func initServer() http.Server {
 	mux.Handle("/", handler)
 
 	return http.Server{
-		Addr:    fmt.Sprintf(":%s", env.Load("API_PORT")),
+		Addr:    fmt.Sprintf(":%s", env.Load("RESTAPI_PORT")),
 		Handler: mux,
 	}
 }

@@ -6,18 +6,8 @@ services:
       args:
         WORKDIR_PATH: ${PWD}
         BUILD_VERSION: ${BUILD_VERSION}
-    env_file:
-      - ./env/.env
-    ports:
-      - "${API_PORT}:${API_PORT}"
     volumes:
       - local:${PWD}/local
       - ./src:${PWD}/src
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:${API_PORT}/build-version"]
-      start_period: 60s
-      interval: 1s
-      timeout: 1s
-      retries: 5
 volumes:
   local:

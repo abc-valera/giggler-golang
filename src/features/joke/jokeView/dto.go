@@ -1,12 +1,12 @@
 package jokeView
 
 import (
-	"giggler-golang/src/shared/data/dbgen/gormModel"
+	"giggler-golang/src/features/joke/jokeData"
 	"giggler-golang/src/shared/view/viewDTO"
 	"giggler-golang/src/shared/view/viewgen"
 )
 
-func NewJokeModel(joke *gormModel.Joke) *viewgen.JokeSchema {
+func NewJokeModel(joke *jokeData.Joke) *viewgen.JokeSchema {
 	return &viewgen.JokeSchema{
 		ID:          joke.ID,
 		UserID:      joke.UserID,
@@ -17,7 +17,7 @@ func NewJokeModel(joke *gormModel.Joke) *viewgen.JokeSchema {
 	}
 }
 
-func NewJokeModels(jokes []*gormModel.Joke) viewgen.JokesSchema {
+func NewJokeModels(jokes []*jokeData.Joke) viewgen.JokesSchema {
 	viewJokes := make(viewgen.JokesSchema, len(jokes))
 	for i, joke := range jokes {
 		viewJokes[i] = *NewJokeModel(joke)

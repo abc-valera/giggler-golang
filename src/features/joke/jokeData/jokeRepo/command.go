@@ -1,11 +1,11 @@
-package jokeData
+package jokeRepo
 
 import (
 	"context"
 	"time"
 
+	"giggler-golang/src/features/joke/jokeData"
 	"giggler-golang/src/shared/data/dataModel"
-	"giggler-golang/src/shared/data/dbgen/gormModel"
 	"giggler-golang/src/shared/otel"
 	"giggler-golang/src/shared/validate"
 
@@ -14,13 +14,13 @@ import (
 )
 
 type command struct {
-	dbCommand dataModel.IGenericCommandCreateUpdateDelete[gormModel.Joke]
+	dbCommand dataModel.IGenericCommandCreateUpdateDelete[jokeData.Joke]
 	query     query
 }
 
 func NewCommand(db *gorm.DB) command {
 	return command{
-		dbCommand: dataModel.NewGenericCommand[gormModel.Joke](db),
+		dbCommand: dataModel.NewGenericCommand[jokeData.Joke](db),
 		query:     NewQuery(db),
 	}
 }
@@ -33,7 +33,7 @@ type CreateReq struct {
 	UserID string `validate:"required,uuid"`
 }
 
-func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.Joke, error) {
+func (c command) Create(ctx context.Context, req CreateReq) (*jokeData.Joke, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
@@ -41,7 +41,7 @@ func (c command) Create(ctx context.Context, req CreateReq) (*gormModel.Joke, er
 		return nil, err
 	}
 
-	joke := &gormModel.Joke{
+	joke := &jokeData.Joke{
 		ID:          uuid.New().String(),
 		Title:       req.Title,
 		Text:        req.Text,
@@ -64,7 +64,7 @@ type UpdateReq struct {
 	Explanation *string `validate:"omitempty,max=4096"`
 }
 
-func (c command) Update(ctx context.Context, req UpdateReq) (*gormModel.Joke, error) {
+func (c command) Update(ctx context.Context, req UpdateReq) (*jokeData.Joke, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
@@ -103,5 +103,5 @@ func (c command) Delete(ctx context.Context, id string) error {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
-	return c.dbCommand.Delete(ctx, &gormModel.Joke{ID: id})
+	return c.dbCommand.Delete(ctx, &jokeData.Joke{ID: id})
 }
