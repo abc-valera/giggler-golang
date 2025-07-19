@@ -4,7 +4,7 @@ import (
 	"giggler-golang/src/shared/env"
 )
 
-var emailerInstance = func() iEmailer {
+var emailerInstance = func() emailer {
 	switch env.Load("EMAILER") {
 	case "dummy":
 		return dummy{}

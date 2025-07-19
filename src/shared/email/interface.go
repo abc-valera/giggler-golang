@@ -1,6 +1,6 @@
 package email
 
-type iEmailer interface {
+type emailer interface {
 	sendEmail(e EmailSendReq) error
 }
 

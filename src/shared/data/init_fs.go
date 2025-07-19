@@ -8,8 +8,8 @@ import (
 	"giggler-golang/src/shared/env"
 )
 
-var FS = func() func() iFS {
-	var fs iFS
+var FS = func() func() fileSystem {
+	var fs fileSystem
 
 	switch env.Load("FS") {
 	case "local":
@@ -26,10 +26,10 @@ var FS = func() func() iFS {
 		panic(env.ErrInvalidEnvValue)
 	}
 
-	return func() iFS { return fs }
+	return func() fileSystem { return fs }
 }()
 
-type iFS interface {
+type fileSystem interface {
 	Create(filename string) error
 	Read(filename string) ([]byte, error)
 	Delete(filename string) error
