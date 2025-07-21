@@ -6,11 +6,13 @@ RUN apk --no-cache add gcc g++
 # Variables that should be provided by the user
 ARG WORKDIR_PATH
 ARG BUILD_VERSION
+ENV GOPATH=/root/go
+ENV GOCACHE=/root/.cache/go-build
 ENV RESTAPI_PORT=8080
 
 # Env variables for Go modules and cache
-ENV GOMODCACHE=/root/go/pkg/mod
-ENV GOCACHE=/root/.cache/go-build
+ENV GOMODCACHE=${GOPATH}/pkg/mod
+ENV GOCACHE=${GOCACHE}
 
 LABEL build_version=${BUILD_VERSION}
 

@@ -9,6 +9,9 @@ services:
   restapi:
     env_file:
       - ./env/.env
+    environment:
+      GOPATH: ${GOPATH}
+      GOCACHE: ${GOCACHE}
     ports:
       - "${RESTAPI_PORT}:${RESTAPI_PORT}"
     healthcheck:

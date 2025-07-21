@@ -7,7 +7,4 @@ services:
         WORKDIR_PATH: ${PWD}
         BUILD_VERSION: ${BUILD_VERSION}
     volumes:
-      - local:${PWD}/local
-      - ./src:${PWD}/src
-volumes:
-  local:
+      - ${PWD}/local

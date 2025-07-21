@@ -6,6 +6,10 @@ env:
   # BUILD_VERSION is a git status in a format: <branch>:<commit hash> (<clean|dirty>)
   BUILD_VERSION:
     sh: printf "%s:%s (%s)" "$(git rev-parse --abbrev-ref HEAD)" "$(git rev-parse --short=4 HEAD)" "$(git status --porcelain | grep -q . && echo "dirty" || echo "clean")"
+  GOPATH:
+    sh: go env GOPATH
+  GOCACHE:
+    sh: go env GOCACHE
 
 dotenv: ["env/.env"]
 

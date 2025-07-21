@@ -7,18 +7,13 @@ ARG WORKDIR_PATH
 ARG BUILD_VERSION
 ENV RESTAPI_PORT=8080
 
-# Env variables for Go modules and cache
-ENV GOMODCACHE=/root/go/pkg/mod
-ENV GOCACHE=/root/.cache/go-build
-
 LABEL build_version=${BUILD_VERSION}
 
 WORKDIR ${WORKDIR_PATH}
 EXPOSE ${RESTAPI_PORT}
 
 COPY go.* .
-RUN --mount=type=cache,target=${GOMODCACHE} \
-    go mod download
+RUN go mod download
 
 COPY ./config ./config
 COPY ./src ./src

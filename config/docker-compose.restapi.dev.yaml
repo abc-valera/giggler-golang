@@ -7,7 +7,7 @@ services:
         WORKDIR_PATH: ${PWD}
         BUILD_VERSION: ${BUILD_VERSION}
     volumes:
-      - local:${PWD}/local
+      - ./local:${PWD}/local
       - ./src:${PWD}/src
-volumes:
-  local:
+      - ${GOPATH}:${GOPATH}
+      - ${GOCACHE}:${GOCACHE}
