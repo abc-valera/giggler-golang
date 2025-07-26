@@ -13,6 +13,7 @@ import (
 
 	"giggler-golang/src/shared/errutil"
 	"giggler-golang/src/shared/otel"
+	"giggler-golang/src/shared/validate"
 )
 
 var ErrInvalidPass = errutil.NewCode(errutil.CodeInvalidArgument, errors.New("invalid password"))
@@ -26,9 +27,13 @@ const (
 	hashKeyLength   uint32 = 32
 )
 
-func Hash(ctx context.Context, password string) string {
+func Hash(ctx context.Context, password string) (string, error) {
 	_, span := otel.Trace(ctx)
 	defer span.End()
+
+	if err := validate.Var(password, "required,min=2,max=32"); err != nil {
+		return "", ErrInvalidPass
+	}
 
 	// Generate a cryptographically secure random salt.
 	salt := generateRandomBytes(hashSaltLength)
@@ -44,7 +49,7 @@ func Hash(ctx context.Context, password string) string {
 	// Return a string using the standard encoded hash representation.
 	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, hashMemory, hashIterations, hashParallelism, b64Salt, b64Hash)
 
-	return encodedHash
+	return encodedHash, nil
 }
 
 // IsReal returns true if the password matches provided hash.

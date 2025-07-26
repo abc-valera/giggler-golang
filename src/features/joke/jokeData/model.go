@@ -1,19 +1,67 @@
 package jokeData
 
 import (
+	"reflect"
 	"time"
 
+	"giggler-golang/src/shared/data"
+	"giggler-golang/src/shared/validate"
+
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type Joke struct {
-	ID          string         `gorm:"column:primaryKey"`
-	Title       string         `gorm:"column:not null;uniqueIndex:idx_user_joke_title"`
-	Text        string         `gorm:"column:not null"`
-	Explanation *string        `gorm:"column:"`
-	CreatedAt   time.Time      `gorm:"column:not null"`
-	UpdatedAt   *time.Time     `gorm:"column:"`
-	DeletedAt   gorm.DeletedAt `gorm:"column:"`
+func init() {
+	data.DB().AutoMigrate(&Joke{})
+}
 
-	UserID string `gorm:"column:not null;uniqueIndex:idx_user_joke_title"`
+type Joke struct {
+	ID          uuid.UUID
+	Title       string  `validate:"required,min=4,max=64" gorm:"not null;uniqueIndex:idx_user_id_joke_title"`
+	Text        string  `validate:"required,min=4,max=4096" gorm:"not null"`
+	Explanation *string `validate:"omitempty,max=4096" gorm:""`
+	CreatedAt   time.Time
+	UpdatedAt   *time.Time
+	DeletedAt   gorm.DeletedAt
+
+	UserID uuid.UUID `validate:"required" gorm:"uniqueIndex:idx_user_id_joke_title"`
+}
+
+// TODO: create a generic func from this,
+// allow to pass additional model-related validation logic
+func (j *Joke) BeforeCreate(tx *gorm.DB) error {
+	j.ID = uuid.New()
+	j.CreatedAt = time.Now()
+
+	if err := validate.Struct(j); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// TODO: create a generic func from this,
+// allow to pass additional model-related validation logic
+func (j *Joke) BeforeUpdate(tx *gorm.DB) error {
+	if !tx.Statement.Changed() {
+		return nil
+	}
+
+	now := time.Now()
+	j.UpdatedAt = &now
+
+	t := reflect.TypeOf(*j)
+
+	var changedFields []string
+	for i := range t.NumField() {
+		if fieldName := t.Field(i).Name; tx.Statement.Changed(fieldName) {
+			changedFields = append(changedFields, fieldName)
+		}
+	}
+
+	if err := validate.StructPartial(j, changedFields...); err != nil {
+		return err
+	}
+
+	return nil
 }

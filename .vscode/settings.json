@@ -1,61 +1,58 @@
 {
-  "todo-tree.highlights.enabled": false,
-  "todo-tree.general.tags": ["TODO", "IDEA", "BUG", "DEBUG"],
+	// TODO-Tree settings
+	"todo-tree.general.tags": ["TODO", "IDEA", "BUG", "DEBUG"],
+	"todo-tree.highlights.enabled": false,
+	"todo-tree.general.statusBar": "tags",
+	"todo-tree.tree.groupedByTag": true,
+	"todo-tree.tree.flat": true,
 
-  "terminal.integrated.env.linux": {
-    "COMPOSE_FILE": "./config/docker-compose.yaml"
-  },
+	// Golang settings
+	"go.testEnvFile": "${workspaceFolder}/env/.test.env",
+	"go.testFlags": ["-count=1"],
+	"go.testTimeout": "5s",
+	"go.useLanguageServer": true,
+	"go.lintOnSave": "package",
+	// gopls is the language server for Go.
+	// It also has checks which are executed automatically by the IDE.
+	//
+	// Can be executed from the command line with:
+	// find . -name "*.go" | xargs gopls check
+	"gopls": {
+		"ui.semanticTokens": true,
+		// gofumpt is a stricter version of gofmt. It's ran automatically on save.
+		// It can be executed from the command line with:
+		// gofumpt -w .
+		"formatting.gofumpt": true,
+		// This setting is refered to the goimports tool, it moves the prefixed imports
+		// to the bottom of the imports list.
+		//
+		// Can be executed from the command line with:
+		// goimports -w -local "giggler-golang" .
+		"formatting.local": "giggler-golang",
+		// More on checks: https://staticcheck.dev/docs/checks/
+		"ui.diagnostic.analyses": {
+			"ST1000": false,
+			"ST1003": false
+		},
+		// Staticcheck can be also executed from the command line with:
+		// staticcheck -checks "all, -ST1000, -ST1003" ./...
+		"ui.diagnostic.staticcheck": true
+	},
+	"[go.mod]": {
+		"editor.defaultFormatter": "golang.go"
+	},
 
-  "go.testEnvFile": "${workspaceFolder}/env/.test.env",
-  "go.testFlags": ["-count=1"],
-  "go.testTimeout": "5s",
+	// Other languages
 
-  "go.useLanguageServer": true,
+	"[shellscript]": {
+		"editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
+	},
+	"shellcheck.exclude": ["1091"],
 
-  // gopls is the language server for Go.
-  // It also has checks which are executed automatically by the IDE.
-  //
-  // Can be executed from the command line with:
-  // find . -name "*.go" | xargs gopls check
-  "gopls": {
-    "ui.semanticTokens": true,
+	"[json][jsonc][markdown]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"prettier.useTabs": true,
 
-    // gofumpt is a stricter version of gofmt. It's ran automatically on save.
-    // It can be executed from the command line with:
-    // gofumpt -w .
-    "formatting.gofumpt": true,
-
-    // This setting is refered to the goimports tool, it moves the prefixed imports
-    // to the bottom of the imports list.
-    //
-    // Can be executed from the command line with:
-    // goimports -w -local "giggler-golang" .
-    "formatting.local": "giggler-golang",
-
-    // More on checks: https://staticcheck.dev/docs/checks/
-    "ui.diagnostic.analyses": {
-      "ST1000": false,
-      "ST1003": false
-    },
-    // Staticcheck can be also executed from the command line with:
-    // staticcheck -checks "all, -ST1000, -ST1003" ./...
-    "ui.diagnostic.staticcheck": true
-  },
-
-  "go.lintOnSave": "package",
-
-  "[go.mod]": {
-    "editor.defaultFormatter": "golang.go"
-  },
-
-  "[sql]": {
-    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
-  },
-  "Prettier-SQL.keywordCase": "upper",
-  "Prettier-SQL.expressionWidth": 80,
-
-  "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
-  },
-  "evenBetterToml.schema.enabled": false
+	"evenBetterToml.schema.enabled": false
 }

@@ -27,13 +27,13 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 
 	tableName := _user.userDo.TableName()
 	_user.ALL = field.NewAsterisk(tableName)
-	_user.ID = field.NewString(tableName, "primaryKey")
-	_user.Username = field.NewString(tableName, "not null")
-	_user.Email = field.NewString(tableName, "not null")
-	_user.HashedPassword = field.NewString(tableName, "not null")
+	_user.ID = field.NewField(tableName, "id")
+	_user.Username = field.NewString(tableName, "username")
+	_user.Email = field.NewString(tableName, "email")
+	_user.HashedPassword = field.NewString(tableName, "hashed_password")
 	_user.Fullname = field.NewString(tableName, "fullname")
 	_user.Status = field.NewString(tableName, "status")
-	_user.CreatedAt = field.NewTime(tableName, "not null")
+	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_user.DeletedAt = field.NewField(tableName, "deleted_at")
 
@@ -46,7 +46,7 @@ type user struct {
 	userDo userDo
 
 	ALL            field.Asterisk
-	ID             field.String
+	ID             field.Field
 	Username       field.String
 	Email          field.String
 	HashedPassword field.String
@@ -71,13 +71,13 @@ func (u user) As(alias string) *user {
 
 func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
-	u.ID = field.NewString(table, "primaryKey")
-	u.Username = field.NewString(table, "not null")
-	u.Email = field.NewString(table, "not null")
-	u.HashedPassword = field.NewString(table, "not null")
+	u.ID = field.NewField(table, "id")
+	u.Username = field.NewString(table, "username")
+	u.Email = field.NewString(table, "email")
+	u.HashedPassword = field.NewString(table, "hashed_password")
 	u.Fullname = field.NewString(table, "fullname")
 	u.Status = field.NewString(table, "status")
-	u.CreatedAt = field.NewTime(table, "not null")
+	u.CreatedAt = field.NewTime(table, "created_at")
 	u.UpdatedAt = field.NewTime(table, "updated_at")
 	u.DeletedAt = field.NewField(table, "deleted_at")
 
@@ -105,13 +105,13 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 
 func (u *user) fillFieldMap() {
 	u.fieldMap = make(map[string]field.Expr, 9)
-	u.fieldMap["primaryKey"] = u.ID
-	u.fieldMap["not null"] = u.Username
-	u.fieldMap["not null"] = u.Email
-	u.fieldMap["not null"] = u.HashedPassword
+	u.fieldMap["id"] = u.ID
+	u.fieldMap["username"] = u.Username
+	u.fieldMap["email"] = u.Email
+	u.fieldMap["hashed_password"] = u.HashedPassword
 	u.fieldMap["fullname"] = u.Fullname
 	u.fieldMap["status"] = u.Status
-	u.fieldMap["not null"] = u.CreatedAt
+	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
 	u.fieldMap["deleted_at"] = u.DeletedAt
 }

@@ -1,10 +1,10 @@
 package email
 
 type emailer interface {
-	sendEmail(e EmailSendReq) error
+	sendEmail(e EmailSendIn) error
 }
 
-type EmailSendReq struct {
+type EmailSendIn struct {
 	Subject     string
 	Content     string
 	To          []string

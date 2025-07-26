@@ -3,6 +3,7 @@ package jokeRepo
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"giggler-golang/src/features/joke/jokeData"
@@ -21,12 +22,12 @@ func NewQuery(db *gorm.DB) query {
 	}
 }
 
-func (q query) GetByID(ctx context.Context, id string) (*jokeData.Joke, error) {
+func (q query) GetByID(ctx context.Context, id uuid.UUID) (*jokeData.Joke, error) {
 	model, err := q.dbQuery.WithContext(ctx).Joke.Where(q.dbQuery.Joke.ID.Eq(id)).First()
 	return model, dbDto.QueryError(err)
 }
 
-func (q query) GetAllByUserID(ctx context.Context, userID string, s dataModel.Selector) ([]*jokeData.Joke, error) {
+func (q query) GetAllByUserID(ctx context.Context, userID uuid.UUID, s dataModel.Selector) ([]*jokeData.Joke, error) {
 	models, err := q.dbQuery.WithContext(ctx).Joke.Where(q.dbQuery.Joke.UserID.Eq(userID)).Find()
 	return models, dbDto.QueryError(err)
 }

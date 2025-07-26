@@ -26,6 +26,8 @@ type loggerInterface interface {
 	Error(message string, vals ...any)
 }
 
+// TODO: add a separate type for the key-value pairs
+
 func Debug(message string, vals ...any) { loggerVar.Debug(message, vals...) }
 
 func Info(message string, vals ...any) { loggerVar.Info(message, vals...) }

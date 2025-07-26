@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"giggler-golang/src/shared/errutil/must"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
@@ -18,8 +20,6 @@ import (
 	metricSDK "go.opentelemetry.io/otel/sdk/metric"
 	traceSDK "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
-
-	"giggler-golang/src/shared/errutil"
 )
 
 var (
@@ -35,9 +35,9 @@ func init() {
 	)
 	otel.SetTextMapPropagator(propagator)
 
-	tracerExporter := errutil.Must(stdouttrace.New(stdouttrace.WithWriter(io.Discard)))
-	meterExporter := errutil.Must(stdoutmetric.New(stdoutmetric.WithWriter(io.Discard)))
-	loggerExporter := errutil.Must(stdoutlog.New(stdoutlog.WithWriter(io.Discard)))
+	tracerExporter := must.Do(stdouttrace.New(stdouttrace.WithWriter(io.Discard)))
+	meterExporter := must.Do(stdoutmetric.New(stdoutmetric.WithWriter(io.Discard)))
+	loggerExporter := must.Do(stdoutlog.New(stdoutlog.WithWriter(io.Discard)))
 
 	tracerProvider := traceSDK.NewTracerProvider(
 		traceSDK.WithBatcher(

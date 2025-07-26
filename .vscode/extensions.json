@@ -1,11 +1,15 @@
 {
-  "recommendations": [
-    "golang.go",
-    "42Crunch.vscode-openapi",
-    "esbenp.prettier-vscode",
-    "inferrinizzard.prettier-sql-vscode",
-    "Gruntfuggly.todo-tree",
-    "tamasfe.even-better-toml",
-    "dotenv.dotenv-vscode"
-  ]
+	"recommendations": [
+		"golang.go",
+		"Gruntfuggly.todo-tree",
+		"tamasfe.even-better-toml",
+		"dotenv.dotenv-vscode",
+		"docker.docker",
+		"qwtel.sqlite-viewer",
+		"gruntfuggly.todo-tree",
+		"biomejs.biome",
+		"mads-hartmann.bash-ide-vscode",
+		"esbenp.prettier-vscode",
+		"qwtel.sqlite-viewer"
+	]
 }

@@ -3,6 +3,7 @@ package userRepo
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"giggler-golang/src/features/user/userData"
@@ -21,7 +22,7 @@ func NewQuery(db *gorm.DB) query {
 	}
 }
 
-func (q query) GetByID(ctx context.Context, id string) (*userData.User, error) {
+func (q query) GetByID(ctx context.Context, id uuid.UUID) (*userData.User, error) {
 	model, err := q.dbQuery.WithContext(ctx).User.Where(q.dbQuery.User.ID.Eq(id)).First()
 	return model, dbDto.QueryError(err)
 }

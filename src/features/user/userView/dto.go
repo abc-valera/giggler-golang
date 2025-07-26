@@ -1,18 +1,29 @@
 package userView
 
 import (
+	"time"
+
 	"giggler-golang/src/features/user/userData"
-	"giggler-golang/src/shared/view/viewDTO"
-	"giggler-golang/src/shared/view/viewgen"
+
+	"github.com/google/uuid"
 )
 
-func NewUserModel(user *userData.User) *viewgen.UserSchema {
-	return &viewgen.UserSchema{
+type UserModel struct {
+	ID        uuid.UUID
+	Username  string
+	Email     string
+	Fullname  *string
+	Status    *string
+	CreatedAt time.Time
+}
+
+func NewUserDTO(user *userData.User) *UserModel {
+	return &UserModel{
 		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,
-		Fullname:  viewDTO.NewOptString(user.Fullname),
-		Status:    viewDTO.NewOptString(user.Fullname),
+		Fullname:  user.Fullname,
+		Status:    user.Status,
 		CreatedAt: user.CreatedAt,
 	}
 }

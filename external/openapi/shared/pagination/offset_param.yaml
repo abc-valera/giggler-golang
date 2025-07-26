@@ -1,5 +1,0 @@
-name: offset
-in: query
-description: Number of items to skip. If not specified, none items are skipped.
-schema:
-  type: integer

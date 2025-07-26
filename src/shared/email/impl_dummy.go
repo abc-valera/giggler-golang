@@ -6,7 +6,7 @@ import (
 
 type dummy struct{}
 
-func (dummy) sendEmail(e EmailSendReq) error {
+func (dummy) sendEmail(e EmailSendIn) error {
 	// Sending email...
 	time.Sleep(250 * time.Millisecond)
 

@@ -1,4 +1,0 @@
-type: array
-title: Jokes
-items:
-  $ref: joke_schema.yaml

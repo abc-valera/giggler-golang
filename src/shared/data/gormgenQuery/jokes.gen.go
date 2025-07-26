@@ -27,14 +27,14 @@ func newJoke(db *gorm.DB, opts ...gen.DOOption) joke {
 
 	tableName := _joke.jokeDo.TableName()
 	_joke.ALL = field.NewAsterisk(tableName)
-	_joke.ID = field.NewString(tableName, "primaryKey")
-	_joke.Title = field.NewString(tableName, "not null")
-	_joke.Text = field.NewString(tableName, "not null")
+	_joke.ID = field.NewField(tableName, "id")
+	_joke.Title = field.NewString(tableName, "title")
+	_joke.Text = field.NewString(tableName, "text")
 	_joke.Explanation = field.NewString(tableName, "explanation")
-	_joke.CreatedAt = field.NewTime(tableName, "not null")
+	_joke.CreatedAt = field.NewTime(tableName, "created_at")
 	_joke.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_joke.DeletedAt = field.NewField(tableName, "deleted_at")
-	_joke.UserID = field.NewString(tableName, "not null")
+	_joke.UserID = field.NewField(tableName, "user_id")
 
 	_joke.fillFieldMap()
 
@@ -45,14 +45,14 @@ type joke struct {
 	jokeDo jokeDo
 
 	ALL         field.Asterisk
-	ID          field.String
+	ID          field.Field
 	Title       field.String
 	Text        field.String
 	Explanation field.String
 	CreatedAt   field.Time
 	UpdatedAt   field.Time
 	DeletedAt   field.Field
-	UserID      field.String
+	UserID      field.Field
 
 	fieldMap map[string]field.Expr
 }
@@ -69,14 +69,14 @@ func (j joke) As(alias string) *joke {
 
 func (j *joke) updateTableName(table string) *joke {
 	j.ALL = field.NewAsterisk(table)
-	j.ID = field.NewString(table, "primaryKey")
-	j.Title = field.NewString(table, "not null")
-	j.Text = field.NewString(table, "not null")
+	j.ID = field.NewField(table, "id")
+	j.Title = field.NewString(table, "title")
+	j.Text = field.NewString(table, "text")
 	j.Explanation = field.NewString(table, "explanation")
-	j.CreatedAt = field.NewTime(table, "not null")
+	j.CreatedAt = field.NewTime(table, "created_at")
 	j.UpdatedAt = field.NewTime(table, "updated_at")
 	j.DeletedAt = field.NewField(table, "deleted_at")
-	j.UserID = field.NewString(table, "not null")
+	j.UserID = field.NewField(table, "user_id")
 
 	j.fillFieldMap()
 
@@ -102,14 +102,14 @@ func (j *joke) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 
 func (j *joke) fillFieldMap() {
 	j.fieldMap = make(map[string]field.Expr, 8)
-	j.fieldMap["primaryKey"] = j.ID
-	j.fieldMap["not null"] = j.Title
-	j.fieldMap["not null"] = j.Text
+	j.fieldMap["id"] = j.ID
+	j.fieldMap["title"] = j.Title
+	j.fieldMap["text"] = j.Text
 	j.fieldMap["explanation"] = j.Explanation
-	j.fieldMap["not null"] = j.CreatedAt
+	j.fieldMap["created_at"] = j.CreatedAt
 	j.fieldMap["updated_at"] = j.UpdatedAt
 	j.fieldMap["deleted_at"] = j.DeletedAt
-	j.fieldMap["not null"] = j.UserID
+	j.fieldMap["user_id"] = j.UserID
 }
 
 func (j joke) clone(db *gorm.DB) joke {

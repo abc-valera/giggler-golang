@@ -32,9 +32,9 @@ Clone the repo and ....
 
 Ensure you have the following installed:
 
+- `bash`
 - `go`
 - `npm`
-- `task`
 - `docker`
 
 ### Initialise
@@ -42,7 +42,7 @@ Ensure you have the following installed:
 Clone the repo, cd into it and run the following command:
 
 ```
-bash config/init-workspace.sh
+bash init-project.sh
 ```
 
 It will prepare the environment for you.

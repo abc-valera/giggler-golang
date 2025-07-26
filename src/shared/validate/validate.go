@@ -33,6 +33,10 @@ func Struct(s any) error {
 	return validate.Struct(s)
 }
 
+func StructPartial(s any, fields ...string) error {
+	return validate.StructPartial(s, fields...)
+}
+
 func Var(v any, tag string) error {
 	return validate.Var(v, tag)
 }
