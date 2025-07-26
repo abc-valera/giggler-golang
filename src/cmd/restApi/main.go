@@ -15,22 +15,20 @@ import (
 	"giggler-golang/src/shared/serviceLocator"
 )
 
-func init() {
+func main() {
 	if env.LoadBool("IS_MUTEX_BLOCK_PPROF_ENABLED") {
 		runtime.SetMutexProfileFraction(1)
 		runtime.SetBlockProfileRate(1)
 	}
 
-	serviceLocator.Disable()
-}
-
-func main() {
-	server := initServer()
+	server := serviceLocator.Get[http.Server]()
 	go func() {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			panic(err)
 		}
 	}()
+
+	serviceLocator.Disable()
 
 	log.Info(
 		"API is running",
