@@ -10,17 +10,10 @@ services:
     env_file:
       - ./env/.env
     environment:
-      GOPATH: ${GOPATH}
+      GOMODCACHE: ${GOMODCACHE}
       GOCACHE: ${GOCACHE}
     ports:
       - "${RESTAPI_PORT}:${RESTAPI_PORT}"
-    healthcheck:
-      test:
-        ["CMD-SHELL", "curl -f http://localhost:${RESTAPI_PORT}/build-version"]
-      start_period: 60s
-      interval: 1s
-      timeout: 1s
-      retries: 5
 
   # CONSUMER SERVICES
   openapi:

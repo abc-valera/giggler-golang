@@ -5,16 +5,9 @@ RUN apk --no-cache add gcc g++
 
 # Variables that should be provided by the user
 ARG WORKDIR_PATH
-ARG BUILD_VERSION
-ENV GOPATH=/root/go
+ENV GOMODCACHE=/root/go/pkg/mod
 ENV GOCACHE=/root/.cache/go-build
 ENV RESTAPI_PORT=8080
-
-# Env variables for Go modules and cache
-ENV GOMODCACHE=${GOPATH}/pkg/mod
-ENV GOCACHE=${GOCACHE}
-
-LABEL build_version=${BUILD_VERSION}
 
 WORKDIR ${WORKDIR_PATH}
 EXPOSE ${RESTAPI_PORT}
@@ -33,9 +26,13 @@ FROM alpine:3.22
 
 RUN apk --no-cache add curl
 
+# Variables that should be provided by the user
 ARG WORKDIR_PATH
+ARG BUILD_VERSION
 
 WORKDIR ${WORKDIR_PATH}
+
+LABEL build_version=${BUILD_VERSION}
 
 COPY --from=builder /usr/bin/giggler-golang-api .
 

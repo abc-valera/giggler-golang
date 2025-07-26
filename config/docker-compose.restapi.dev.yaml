@@ -9,5 +9,10 @@ services:
     volumes:
       - ./local:${PWD}/local
       - ./src:${PWD}/src
-      - ${GOPATH}:${GOPATH}
+      - ${GOMODCACHE}:${GOMODCACHE}
       - ${GOCACHE}:${GOCACHE}
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:${RESTAPI_PORT}/build-version"]
+      interval: 1m
+      retries: 500

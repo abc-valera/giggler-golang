@@ -6,8 +6,12 @@ env:
   # BUILD_VERSION is a git status in a format: <branch>:<commit hash> (<clean|dirty>)
   BUILD_VERSION:
     sh: printf "%s:%s (%s)" "$(git rev-parse --abbrev-ref HEAD)" "$(git rev-parse --short=4 HEAD)" "$(git status --porcelain | grep -q . && echo "dirty" || echo "clean")"
+  # BUILDKIT_PROGRESS prints the build logs for dockerfiles
+  BUILDKIT_PROGRESS: plain
   GOPATH:
     sh: go env GOPATH
+  GOMODCACHE:
+    sh: go env GOMODCACHE
   GOCACHE:
     sh: go env GOCACHE
 

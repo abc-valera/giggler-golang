@@ -5,6 +5,7 @@ RUN apk --no-cache add gcc g++ curl
 # Variables that should be provided by the user
 ARG WORKDIR_PATH
 ARG BUILD_VERSION
+ENV GOMODCACHE=/root/go/pkg/mod
 ENV RESTAPI_PORT=8080
 
 LABEL build_version=${BUILD_VERSION}
@@ -13,7 +14,8 @@ WORKDIR ${WORKDIR_PATH}
 EXPOSE ${RESTAPI_PORT}
 
 COPY go.* .
-RUN go mod download
+RUN --mount=type=cache,target=${GOMODCACHE} \
+    go mod download
 
 COPY ./config ./config
 COPY ./src ./src
