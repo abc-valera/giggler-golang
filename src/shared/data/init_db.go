@@ -5,10 +5,9 @@ import (
 
 	"gorm.io/driver/sqlite"
 
-	"giggler-golang/src/features/joke/jokeData"
-	"giggler-golang/src/features/user/userData"
 	"giggler-golang/src/shared/env"
 	"giggler-golang/src/shared/errutil"
+	"giggler-golang/src/shared/serviceLocator"
 )
 
 var DB = func() func() *gorm.DB {
@@ -20,14 +19,11 @@ var DB = func() func() *gorm.DB {
 			sqlite.Open(env.Load("SQLITE_DSN")),
 			&gorm.Config{TranslateError: true},
 		))
+
+		serviceLocator.Set(gormDB)
 	default:
 		panic(env.ErrInvalidEnvValue)
 	}
-
-	gormDB.AutoMigrate(
-		userData.User{},
-		jokeData.Joke{},
-	)
 
 	return func() *gorm.DB { return gormDB }
 }()

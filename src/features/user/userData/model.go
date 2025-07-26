@@ -3,8 +3,14 @@ package userData
 import (
 	"time"
 
+	"giggler-golang/src/shared/data"
+
 	"gorm.io/gorm"
 )
+
+func init() {
+	data.DB().AutoMigrate(&User{})
+}
 
 type User struct {
 	ID             string         `gorm:"column:primaryKey"`

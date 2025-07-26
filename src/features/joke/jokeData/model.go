@@ -3,8 +3,14 @@ package jokeData
 import (
 	"time"
 
+	"giggler-golang/src/shared/data"
+
 	"gorm.io/gorm"
 )
+
+func init() {
+	data.DB().AutoMigrate(&Joke{})
+}
 
 type Joke struct {
 	ID          string         `gorm:"column:primaryKey"`

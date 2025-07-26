@@ -12,6 +12,7 @@ import (
 	"giggler-golang/src/shared/app"
 	"giggler-golang/src/shared/env"
 	"giggler-golang/src/shared/serviceLocator"
+	"giggler-golang/src/shared/view/internal"
 )
 
 var api = func() huma.API {
@@ -34,18 +35,13 @@ var api = func() huma.API {
 	config.DocsPath = "/docs/"
 	config.SchemasPath = "/schemas"
 	config.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
-		"myAuth": {
-			Type: "oauth2",
-			Flows: &huma.OAuthFlows{
-				AuthorizationCode: &huma.OAuthFlow{
-					AuthorizationURL: "https://example.com/oauth/authorize",
-					TokenURL:         "https://example.com/oauth/token",
-					Scopes: map[string]string{
-						"scope1": "Scope 1 description...",
-						"scope2": "Scope 2 description...",
-					},
-				},
-			},
+		internal.DefaultSecurityScheme: {
+			Type:         "apiKey",
+			Description:  "JWT token for authentication",
+			In:           "header",
+			Name:         "Authorization",
+			Scheme:       "bearer",
+			BearerFormat: "JWT",
 		},
 	}
 
