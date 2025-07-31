@@ -42,7 +42,7 @@ Ensure you have the following installed:
 Clone the repo, cd into it and run the following command:
 
 ```
-bash config/init-workspace.sh
+bash init-workspace.sh
 ```
 
 It will prepare the environment for you.

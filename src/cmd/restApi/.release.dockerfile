@@ -14,14 +14,14 @@ EXPOSE ${RESTAPI_PORT}
 
 COPY go.* .
 RUN --mount=type=cache,target=${GOMODCACHE} \
-    go mod download
+	go mod download
 
 COPY ./src ./src
 RUN --mount=type=cache,target=${GOMODCACHE} \
-    --mount=type=cache,target=${GOCACHE} \
-    CGO_ENABLED=1 go build -ldflags="-X 'giggler-golang/src/shared/app.buildVersion=${BUILD_VERSION}'" -o /usr/bin/giggler-golang-api ./src/cmd/restApi
+	--mount=type=cache,target=${GOCACHE} \
+	CGO_ENABLED=1 go build -ldflags="-X 'giggler-golang/src/shared/app.buildVersion=${BUILD_VERSION}'" -o /usr/bin/giggler-golang-api ./src/cmd/restApi
 
-# RUN STAGE 
+# RUN STAGE
 FROM alpine:3.22
 
 RUN apk --no-cache add curl

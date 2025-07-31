@@ -14,7 +14,7 @@ WORKDIR /workspace
 COPY ./external/openapi/ .
 
 RUN --mount=type=cache,target=${GOMODCACHE} \
-    --mount=type=cache,target=${GOCACHE} \
-    go build -o bin ./cmd/main.go
+	--mount=type=cache,target=${GOCACHE} \
+	go build -o bin ./cmd/main.go
 
 CMD ["./bin"]

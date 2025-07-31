@@ -15,9 +15,9 @@ EXPOSE ${RESTAPI_PORT}
 
 COPY go.* .
 RUN --mount=type=cache,target=${GOMODCACHE} \
-    go mod download
+	go mod download
 
 COPY ./config ./config
 COPY ./src ./src
 
-CMD ["go", "tool", "air", "-c", "./config/air.toml"]
+CMD ["go", "tool", "air", "-c", "./air.toml"]

@@ -2,15 +2,14 @@ services:
   restapi:
     build:
       context: .
-      dockerfile: ./src/cmd/restApi/Dockerfile.release
+      dockerfile: ./src/cmd/restApi/.release.dockerfile
       args:
         WORKDIR_PATH: ${PWD}
         BUILD_VERSION: ${BUILD_VERSION}
     volumes:
       - ${PWD}/local
     healthcheck:
-      test:
-        ["CMD-SHELL", "curl -f http://localhost:${RESTAPI_PORT}/build-version"]
+      test: ["CMD-SHELL", "curl -f http://localhost:${RESTAPI_PORT}/build-version"]
       start_period: 5s
       interval: 1s
       timeout: 1s
