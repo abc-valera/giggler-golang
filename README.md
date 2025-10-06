@@ -12,40 +12,15 @@ The project utilizes **feature-first** design, where features are first-class ci
 
 ## On the architecture
 
-## Local launch setup
+TBD
 
-The project is supposed to be run using the docker compose.
+## Local launch
 
-### Requirements
+TBD
 
-Ensure you have the following installed:
+## Local development
 
-- `docker`
-
-### Initialize
-
-Clone the repo and ....
-
-## Development setup
-
-### Requirements
-
-Ensure you have the following installed:
-
-- `bash`
-- `go`
-- `npm`
-- `docker`
-
-### Initialise
-
-Clone the repo, cd into it and run the following command:
-
-```
-bash init-project.sh
-```
-
-It will prepare the environment for you.
+TDB
 
 ## Designs
 

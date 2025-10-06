@@ -79,12 +79,16 @@ run::gorm:generate() {
 	go run ./src/cmd/gormgen
 }
 
+# TODO: adapt this to both classic/nixos/devcontainers setups
 run::init-dev-env() {
 	echo "Downloading tools and dependencies 📦 (It can take some time...)"
 
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/air-verse/air@latest
 	go install github.com/go-delve/delve/cmd/dlv@latest
+	# gopls
+	# staticcheck
+	# goimports
 
 	go mod download
 
@@ -92,6 +96,7 @@ run::init-dev-env() {
 
 	echo "Pulling and building docker images 🐳 (It can take even more time.....)"
 
+	# TODO: pull the images
 	run::restapi:release
 
 	# Create a default .env file
