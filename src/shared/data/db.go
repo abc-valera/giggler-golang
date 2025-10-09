@@ -7,19 +7,18 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"giggler-golang/src/shared/env"
 	"giggler-golang/src/shared/errutil/must"
 )
 
 var DB = func() func() *gorm.DB {
 	dsn := fmt.Sprintf(
 		"user=%s password=%s dbname=%s host=%s port=%s sslmode=%s",
-		env.Load("POSTGRES_USER"),
-		env.Load("POSTGRES_PASSWORD"),
-		env.Load("POSTGRES_DB"),
-		env.Load("POSTGRES_HOST"),
-		env.Load("POSTGRES_PORT"),
-		env.Load("POSTGRES_SSLMODE"),
+		must.Env("POSTGRES_USER"),
+		must.Env("POSTGRES_PASSWORD"),
+		must.Env("POSTGRES_DB"),
+		must.Env("POSTGRES_HOST"),
+		must.Env("POSTGRES_PORT"),
+		must.Env("POSTGRES_SSLMODE"),
 	)
 	postgresConfig := postgres.Config{
 		DSN:                  dsn,

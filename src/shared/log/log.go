@@ -5,17 +5,17 @@ import (
 	"log/slog"
 	"os"
 
-	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil/must"
 )
 
 var loggerVar = func() loggerInterface {
-	switch env.Load("LOGGER") {
+	switch must.Env("LOGGER") {
 	case "stdout":
 		return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case "nop":
 		return slog.New(slog.NewTextHandler(io.Discard, nil))
 	default:
-		panic(env.ErrInvalidEnvValue)
+		panic(must.ErrInvalidEnvValue)
 	}
 }()
 

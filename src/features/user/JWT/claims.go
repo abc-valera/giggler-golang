@@ -3,7 +3,7 @@ package JWT
 import (
 	"time"
 
-	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil/must"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -11,15 +11,15 @@ import (
 
 var (
 	jwtSignKey = func() string {
-		key := env.Load("JWT_SIGN_KEY")
+		key := must.Env("JWT_SIGN_KEY")
 		if len(key) < 32 {
 			panic("sign key for JWT is too short")
 		}
 		return key
 	}()
 	jwtSignMethod      = jwt.SigningMethodHS256
-	jwtAccessDuration  = env.LoadDuration("JWT_ACCESS_DURATION")
-	jwtRefreshDuration = env.LoadDuration("JWT_REFRESH_DURATION")
+	jwtAccessDuration  = must.EnvDuration("JWT_ACCESS_DURATION")
+	jwtRefreshDuration = must.EnvDuration("JWT_REFRESH_DURATION")
 )
 
 type Payload struct {

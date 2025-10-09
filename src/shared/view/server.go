@@ -9,14 +9,14 @@ import (
 
 	"giggler-golang/src/features/user/userLevel"
 	"giggler-golang/src/shared/buildVersion"
-	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil/must"
 	"giggler-golang/src/shared/log/logView"
 )
 
 var API = func() func() huma.API {
 	mux := http.NewServeMux()
 
-	if env.LoadBool("IS_HTTP_PPROF_INTERFACE_ENABLED") {
+	if must.EnvBool("IS_HTTP_PPROF_INTERFACE_ENABLED") {
 		mux.HandleFunc("GET /debug/pprof/", pprof.Index)
 		mux.HandleFunc("GET /debug/pprof/cmdline", pprof.Cmdline)
 		mux.HandleFunc("GET /debug/pprof/profile", pprof.Profile)

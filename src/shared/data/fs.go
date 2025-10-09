@@ -5,15 +5,15 @@ import (
 	"os"
 
 	"giggler-golang/src/shared/data/internal/localFS"
-	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil/must"
 )
 
 var FS = func() func() fileSystem {
 	var fs fileSystem
 
-	switch env.Load("FS") {
+	switch must.Env("FS") {
 	case "local":
-		folderPath := env.Load("LOCAL_DSN")
+		folderPath := must.Env("LOCAL_DSN")
 
 		if err := os.MkdirAll(folderPath, 0o755); err != nil {
 			if !os.IsExist(err) {
@@ -23,7 +23,7 @@ var FS = func() func() fileSystem {
 
 		fs = localFS.New(folderPath)
 	default:
-		panic(env.ErrInvalidEnvValue)
+		panic(must.ErrInvalidEnvValue)
 	}
 
 	return func() fileSystem { return fs }

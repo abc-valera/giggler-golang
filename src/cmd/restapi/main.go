@@ -12,14 +12,14 @@ import (
 
 	"giggler-golang/src/features/user/userView"
 	"giggler-golang/src/shared/buildVersion"
-	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil/must"
 	"giggler-golang/src/shared/initPhase"
 	"giggler-golang/src/shared/log"
 	"giggler-golang/src/shared/view"
 )
 
 func init() {
-	if env.LoadBool("IS_MUTEX_BLOCK_PPROF_ENABLED") {
+	if must.EnvBool("IS_MUTEX_BLOCK_PPROF_ENABLED") {
 		runtime.SetMutexProfileFraction(1)
 		runtime.SetBlockProfileRate(1)
 	}
@@ -31,7 +31,7 @@ func main() {
 	initPhase.Finish()
 
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%s", env.Load("RESTAPI_PORT")),
+		Addr:    fmt.Sprintf(":%s", must.Env("RESTAPI_PORT")),
 		Handler: view.API().Adapter(),
 	}
 

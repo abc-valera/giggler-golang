@@ -1,15 +1,15 @@
 package email
 
 import (
-	"giggler-golang/src/shared/env"
+	"giggler-golang/src/shared/errutil/must"
 )
 
 var emailerInstance = func() emailer {
-	switch env.Load("EMAILER") {
+	switch must.Env("EMAILER") {
 	case "dummy":
 		return dummy{}
 	default:
-		panic(env.ErrInvalidEnvValue)
+		panic(must.ErrInvalidEnvValue)
 	}
 }()
 
