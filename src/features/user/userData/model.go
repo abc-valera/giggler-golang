@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	data.DB().AutoMigrate(&User{})
+	data.GetDb().AutoMigrate(&User{})
 }
 
 // TODO: check if 'required' keyword is needed here

@@ -8,17 +8,18 @@ import (
 	"gorm.io/gorm/schema"
 
 	"giggler-golang/src/shared/errutil/must"
+	"giggler-golang/src/shared/singleton"
 )
 
-var DB = func() func() *gorm.DB {
+var GetDb = singleton.New(func() *gorm.DB {
 	dsn := fmt.Sprintf(
 		"user=%s password=%s dbname=%s host=%s port=%s sslmode=%s",
-		must.Env("POSTGRES_USER"),
-		must.Env("POSTGRES_PASSWORD"),
-		must.Env("POSTGRES_DB"),
-		must.Env("POSTGRES_HOST"),
-		must.Env("POSTGRES_PORT"),
-		must.Env("POSTGRES_SSLMODE"),
+		must.GetEnv("POSTGRES_USER"),
+		must.GetEnv("POSTGRES_PASSWORD"),
+		must.GetEnv("POSTGRES_DB"),
+		must.GetEnv("POSTGRES_HOST"),
+		must.GetEnv("POSTGRES_PORT"),
+		must.GetEnv("POSTGRES_SSLMODE"),
 	)
 	postgresConfig := postgres.Config{
 		DSN:                  dsn,
@@ -31,7 +32,5 @@ var DB = func() func() *gorm.DB {
 		},
 	}
 
-	db := must.Do(gorm.Open(postgres.New(postgresConfig), gormConfig))
-
-	return func() *gorm.DB { return db }
-}()
+	return must.Do(gorm.Open(postgres.New(postgresConfig), gormConfig))
+})

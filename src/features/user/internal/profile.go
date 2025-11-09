@@ -16,7 +16,7 @@ func Profile(ctx context.Context) (*userData.User, error) {
 
 	p := JWT.Get(ctx)
 
-	q := gormgenQuery.Use(data.DB())
+	q := gormgenQuery.Use(data.GetDb())
 	user, err := q.WithContext(ctx).User.Where(q.User.ID.Eq(p.UserID)).First()
 	if err != nil {
 		return nil, err

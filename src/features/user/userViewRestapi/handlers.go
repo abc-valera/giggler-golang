@@ -1,4 +1,4 @@
-package userView
+package userViewRestapi
 
 import (
 	"context"

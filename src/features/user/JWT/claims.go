@@ -11,15 +11,15 @@ import (
 
 var (
 	jwtSignKey = func() string {
-		key := must.Env("JWT_SIGN_KEY")
+		key := must.GetEnv("JWT_SIGN_KEY")
 		if len(key) < 32 {
 			panic("sign key for JWT is too short")
 		}
 		return key
 	}()
 	jwtSignMethod      = jwt.SigningMethodHS256
-	jwtAccessDuration  = must.EnvDuration("JWT_ACCESS_DURATION")
-	jwtRefreshDuration = must.EnvDuration("JWT_REFRESH_DURATION")
+	jwtAccessDuration  = must.GetEnvDuration("JWT_ACCESS_DURATION")
+	jwtRefreshDuration = must.GetEnvDuration("JWT_REFRESH_DURATION")
 )
 
 type Payload struct {

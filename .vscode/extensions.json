@@ -7,7 +7,6 @@
 		"docker.docker",
 		"qwtel.sqlite-viewer",
 		"gruntfuggly.todo-tree",
-		"biomejs.biome",
 		"mads-hartmann.bash-ide-vscode",
 		"esbenp.prettier-vscode",
 		"qwtel.sqlite-viewer"

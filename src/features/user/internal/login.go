@@ -26,7 +26,7 @@ func Login(ctx context.Context, req LoginIn) (LoginOut, error) {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
-	q := gormgenQuery.Use(data.DB())
+	q := gormgenQuery.Use(data.GetDb())
 	foundUser, err := q.WithContext(ctx).User.Where(q.User.Email.Eq(req.Email)).First()
 	if err != nil {
 		return LoginOut{}, err

@@ -10,9 +10,9 @@ import (
 
 var ErrInvalidEnvValue = errors.New("invalid env value")
 
-// Env is a shortcut for trimming and empty-cheking environemnt variables.
+// GetEnv is a shortcut for trimming and empty-cheking environemnt variables.
 // Panics if the env var is not set.
-func Env(key string) string {
+func GetEnv(key string) string {
 	env, ok := os.LookupEnv(key)
 	if !ok {
 		panic(key + " env var is not set")
@@ -21,14 +21,14 @@ func Env(key string) string {
 	return strings.TrimSpace(env)
 }
 
-// EnvBool gets the env var and parses it as bool.
+// GetEnvBool gets the env var and parses it as bool.
 // Panics if the env var is not set or has invalid value.
 //
 // Possible values:
 //   - true
 //   - false
-func EnvBool(key string) bool {
-	switch strings.ToLower(Env(key)) {
+func GetEnvBool(key string) bool {
+	switch strings.ToLower(GetEnv(key)) {
 	case "true":
 		return true
 	case "false":
@@ -38,18 +38,18 @@ func EnvBool(key string) bool {
 	}
 }
 
-// EnvDuration gets the env var and parses it as duration.
+// GetEnvDuration gets the env var and parses it as duration.
 // Panics if the env var is not set or has invalid value.
-func EnvDuration(key string) time.Duration {
-	dur, err := time.ParseDuration(Env(key))
+func GetEnvDuration(key string) time.Duration {
+	dur, err := time.ParseDuration(GetEnv(key))
 	if err != nil {
 		panic("failed to parse " + key + " env var as duration")
 	}
 	return dur
 }
 
-// EnvUrl gets the env var and parses it as URL.
+// GetEnvUrl gets the env var and parses it as URL.
 // Panics if the env var is not set or has invalid value.
-func EnvUrl(key string) *url.URL {
-	return UrlParse(Env(key))
+func GetEnvUrl(key string) *url.URL {
+	return UrlParse(GetEnv(key))
 }

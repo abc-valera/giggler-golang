@@ -1,4 +1,4 @@
-package view
+package example
 
 import (
 	"context"
@@ -7,8 +7,10 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func init() {
-	huma.Get(API(), "/hello/{name}", helloHandler)
+// NOTE: this exists for demonstration purposes only
+
+func ApplyRoutes(api huma.API) {
+	huma.Get(api, "/hello/{name}", helloHandler)
 }
 
 type HelloIn struct {

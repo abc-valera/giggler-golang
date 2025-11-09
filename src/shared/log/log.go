@@ -6,10 +6,11 @@ import (
 	"os"
 
 	"giggler-golang/src/shared/errutil/must"
+	"giggler-golang/src/shared/singleton"
 )
 
-var loggerVar = func() loggerInterface {
-	switch must.Env("LOGGER") {
+var getLogger = singleton.New(func() loggerInterface {
+	switch must.GetEnv("LOGGER") {
 	case "stdout":
 		return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case "nop":
@@ -17,7 +18,7 @@ var loggerVar = func() loggerInterface {
 	default:
 		panic(must.ErrInvalidEnvValue)
 	}
-}()
+})
 
 type loggerInterface interface {
 	Debug(message string, vals ...any)
@@ -28,10 +29,10 @@ type loggerInterface interface {
 
 // TODO: add a separate type for the key-value pairs
 
-func Debug(message string, vals ...any) { loggerVar.Debug(message, vals...) }
+func Debug(message string, vals ...any) { getLogger().Debug(message, vals...) }
 
-func Info(message string, vals ...any) { loggerVar.Info(message, vals...) }
+func Info(message string, vals ...any) { getLogger().Info(message, vals...) }
 
-func Warn(message string, vals ...any) { loggerVar.Warn(message, vals...) }
+func Warn(message string, vals ...any) { getLogger().Warn(message, vals...) }
 
-func Error(message string, vals ...any) { loggerVar.Error(message, vals...) }
+func Error(message string, vals ...any) { getLogger().Error(message, vals...) }

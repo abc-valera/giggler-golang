@@ -6,14 +6,13 @@ import (
 
 	"giggler-golang/src/shared/data/internal/localFS"
 	"giggler-golang/src/shared/errutil/must"
+	"giggler-golang/src/shared/singleton"
 )
 
-var FS = func() func() fileSystem {
-	var fs fileSystem
-
-	switch must.Env("FS") {
+var GetFs = singleton.New(func() fileSystem {
+	switch must.GetEnv("FS") {
 	case "local":
-		folderPath := must.Env("LOCAL_DSN")
+		folderPath := must.GetEnv("LOCAL_DSN")
 
 		if err := os.MkdirAll(folderPath, 0o755); err != nil {
 			if !os.IsExist(err) {
@@ -21,13 +20,11 @@ var FS = func() func() fileSystem {
 			}
 		}
 
-		fs = localFS.New(folderPath)
+		return localFS.New(folderPath)
 	default:
 		panic(must.ErrInvalidEnvValue)
 	}
-
-	return func() fileSystem { return fs }
-}()
+})
 
 type fileSystem interface {
 	Create(filename string) error

@@ -1,4 +1,4 @@
-package userView
+package userViewRestapi
 
 import (
 	"net/http"
@@ -6,15 +6,14 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 
 	"giggler-golang/src/features/user/userLevel"
-	"giggler-golang/src/shared/view"
 )
 
-func Init() {
+func ApplyRoutes(api huma.API) {
 	// TODO: add helper functions in the view package
-	huma.Post(view.API(), "/register", RegisterHandler)
-	huma.Post(view.API(), "/login", LoginHandler)
-	huma.Post(view.API(), "/refresh", RefreshHandler)
-	huma.Register(view.API(), huma.Operation{
+	huma.Post(api, "/register", RegisterHandler)
+	huma.Post(api, "/login", LoginHandler)
+	huma.Post(api, "/refresh", RefreshHandler)
+	huma.Register(api, huma.Operation{
 		OperationID: "profile",
 		Method:      http.MethodGet,
 		Path:        "/profile",

@@ -1,4 +1,4 @@
-package email
+package emailer
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 
 type dummy struct{}
 
-func (dummy) sendEmail(e EmailSendIn) error {
+func (dummy) Send(e EmailSendIn) error {
 	// Sending email...
 	time.Sleep(250 * time.Millisecond)
 

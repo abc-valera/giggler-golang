@@ -11,7 +11,7 @@ import (
 	"giggler-golang/src/features/user/userPassword"
 	"giggler-golang/src/shared/data"
 	"giggler-golang/src/shared/data/dbDto"
-	"giggler-golang/src/shared/email"
+	"giggler-golang/src/shared/emailer"
 	"giggler-golang/src/shared/otel"
 )
 
@@ -38,18 +38,18 @@ func Register(ctx context.Context, req RegisterIn) error {
 			HashedPassword: hash,
 		}
 
-		if res := data.DB().WithContext(ctx).Create(user); res != nil {
+		if res := data.GetDb().WithContext(ctx).Create(user); res != nil {
 			return dbDto.CommandError(res)
 		}
 
-		return email.Send(email.EmailSendIn{
+		return emailer.Get().Send(emailer.EmailSendIn{
 			Subject: "Verification Email for Giggler!",
 			Content: fmt.Sprintf("%s, congrats with joining the Giggler community!", req.Username),
 			To:      []string{req.Email},
 		})
 	}
 
-	if err := data.DB().WithContext(ctx).Transaction(txFunc); err != nil {
+	if err := data.GetDb().WithContext(ctx).Transaction(txFunc); err != nil {
 		// TODO: make sure process this error properly
 		// TODO: maybe make gorm errors to be domain errors
 		return fmt.Errorf("failed to register user: %w", err)

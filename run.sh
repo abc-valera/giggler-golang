@@ -3,27 +3,11 @@
 # run.sh is written using an eponymous pattern for organizing project’s CLI commands.
 # Read more: https://run.jotaen.net/
 
-# Load env from .env file if exists
+# Load env from dotenv files
+[[ -f ./env/example.env ]] && set -a && source ./env/example.env && set +a
 [[ -f ./env/.env ]] && set -a && source ./env/.env && set +a
 
-# BUILD_VERSION is a git status in a format: <branch>:<commit hash> (<clean|dirty>)
-BUILD_VERSION=$(
-	printf "%s:%s (%s)" \
-		"$(git rev-parse --abbrev-ref HEAD)" \
-		"$(git rev-parse --short=4 HEAD)" \
-		"$(git status --porcelain | grep -q . && echo "dirty" || echo "clean")"
-)
-export BUILD_VERSION
-
-GOPATH=$(go env GOPATH)
-export GOPATH
-GOMODCACHE=$(go env GOMODCACHE)
-export GOMODCACHE
-GOCACHE=$(go env GOCACHE)
-export GOCACHE
-
 run::restapi:dev() {
-	export POSTGRES_HOST=localhost
 	docker compose --profile dev up -d
 	sleep 2
 	air
@@ -80,7 +64,7 @@ run::gorm:generate() {
 }
 
 # TODO: adapt this to both classic/nixos/devcontainers setups
-run::init-dev-env() {
+run::init-dev-tooling() {
 	echo "Downloading tools and dependencies 📦 (It can take some time...)"
 
 	go install mvdan.cc/gofumpt@latest
@@ -96,7 +80,7 @@ run::init-dev-env() {
 
 	echo "Pulling and building docker images 🐳 (It can take even more time.....)"
 
-	# TODO: pull the images
+	# TODO: pull the images instead
 	run::restapi:release
 
 	# Create a default .env file

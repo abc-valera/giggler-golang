@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	data.DB().AutoMigrate(&Joke{})
+	data.GetDb().AutoMigrate(&Joke{})
 }
 
 type Joke struct {
