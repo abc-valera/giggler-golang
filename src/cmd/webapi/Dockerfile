@@ -8,10 +8,10 @@ ARG WORKDIR_PATH
 ENV HOME=/root
 ENV GOMODCACHE=$HOME/go/pkg/mod
 ENV GOCACHE=$HOME/.cache/go-build
-ENV RESTAPI_PORT=8080
+ENV WEBAPI_PORT=8080
 
 WORKDIR ${WORKDIR_PATH}
-EXPOSE ${RESTAPI_PORT}
+EXPOSE ${WEBAPI_PORT}
 
 RUN echo ${HOME}
 
@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=${GOMODCACHE} \
 
 RUN --mount=type=cache,target=${GOMODCACHE} \
 	--mount=type=cache,target=${GOCACHE} \
-	go build -o /usr/bin/giggler-golang-api ./src/cmd/restapi
+	go build -o /usr/bin/giggler-golang-api ./src/cmd/webapi
 
 FROM alpine:3.22 AS runner
 

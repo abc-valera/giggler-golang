@@ -7,26 +7,26 @@
 [[ -f ./env/example.env ]] && set -a && source ./env/example.env && set +a
 [[ -f ./env/.env ]] && set -a && source ./env/.env && set +a
 
-run::restapi:dev() {
+run::webapi:dev() {
 	docker compose --profile dev up -d
 	sleep 2
 	air
 }
 
-run::restapi:dev:down() {
+run::webapi:dev:down() {
 	echo_warning
 	docker compose --profile dev down -v
 }
 
-run::restapi:release() {
+run::webapi:release() {
 	docker compose --profile release up --build -d
 }
 
-run::restapi:release:logs() {
+run::webapi:release:logs() {
 	docker compose --profile release logs -f
 }
 
-run::restapi:release:down() {
+run::webapi:release:down() {
 	echo_warning
 	docker compose --profile release down -v
 }
@@ -81,7 +81,7 @@ run::init-dev-tooling() {
 	echo "Pulling and building docker images 🐳 (It can take even more time.....)"
 
 	# TODO: pull the images instead
-	run::restapi:release
+	run::webapi:release
 
 	# Create a default .env file
 	cp ./env/example.env ./env/.env

@@ -16,7 +16,7 @@ import (
 
 	"giggler-golang/src/features/example"
 	"giggler-golang/src/features/user/userLevel"
-	"giggler-golang/src/features/user/userViewRestapi"
+	"giggler-golang/src/features/user/userViewWebapi"
 	"giggler-golang/src/shared/buildVersion"
 	"giggler-golang/src/shared/errutil/must"
 	"giggler-golang/src/shared/log"
@@ -99,11 +99,11 @@ func main() {
 
 	// Register features
 	example.ApplyRoutes(humaApi)
-	userViewRestapi.ApplyRoutes(humaApi)
+	userViewWebapi.ApplyRoutes(humaApi)
 
 	// Create a default HTTP server
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%s", must.GetEnv("RESTAPI_PORT")),
+		Addr:    fmt.Sprintf(":%s", must.GetEnv("WEBAPI_PORT")),
 		Handler: humaApi.Adapter(),
 	}
 

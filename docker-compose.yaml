@@ -25,12 +25,12 @@ services:
       retries: 10
 
   # API ITSELF
-  restapi:
+  webapi:
     profiles:
       - release
     build:
       context: .
-      dockerfile: ./src/cmd/restapi/Dockerfile
+      dockerfile: ./src/cmd/webapi/Dockerfile
       args:
         WORKDIR_PATH: ${PWD}
     env_file:
@@ -41,12 +41,12 @@ services:
     volumes:
       - ${PWD}/local
     ports:
-      - "${RESTAPI_PORT:-8080}:${RESTAPI_PORT:-8080}"
+      - "${WEBAPI_PORT:-8080}:${WEBAPI_PORT:-8080}"
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "curl -f http://localhost:${RESTAPI_PORT:-8080}/build-version",
+          "curl -f http://localhost:${WEBAPI_PORT:-8080}/build-version",
         ]
       start_period: 5s
       interval: 1s
@@ -76,5 +76,5 @@ services:
     volumes:
       - /var/lib/grafana
     depends_on:
-      restapi:
+      webapi:
         condition: service_healthy

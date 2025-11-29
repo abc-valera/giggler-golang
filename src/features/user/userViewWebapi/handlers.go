@@ -1,4 +1,4 @@
-package userViewRestapi
+package userViewWebapi
 
 import (
 	"context"
