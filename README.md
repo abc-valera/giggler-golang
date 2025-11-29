@@ -16,11 +16,16 @@ TBD
 
 ## Local launch
 
-TBD
+Either `./run.sh run::webapi:dev` or `./run.sh run::webapi:release`
 
-## Local development
+## Development
 
-TDB
+To update dependencies, run:
+
+```bash
+go get -u ./...
+go mod tidy
+```
 
 ## Designs
 

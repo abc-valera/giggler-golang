@@ -1,0 +1,21 @@
+name: giggler-golang-release
+services:
+  db:
+    volumes:
+      # TODO: define a release-db volume
+      - /var/lib/postgresql
+    restart: always
+  webapi:
+    build:
+      context: .
+      dockerfile: ./src/cmd/webapi/Dockerfile.release
+      args:
+        WORKDIR_PATH: ${PWD}
+        GOMODCACHE: ${HOME}/go/pkg/mod
+        GOCACHE: ${HOME}/.cache/go-build
+    volumes:
+      # TODO: define a release-webapi volume
+      - ${PWD}/local:${PWD}/local
+    restart: always
+  grafana:
+    restart: always

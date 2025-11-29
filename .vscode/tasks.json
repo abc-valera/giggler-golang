@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "webapi-dev-up",
+			"type": "shell",
+			"command": "./run.sh run::webapi:dev",
+			"problemMatcher": {
+				"pattern": {
+					"regexp": "^(.*)$",
+					"file": 1
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": ".",
+					"endsPattern": "API server listening at:"
+				}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"isBackground": true
+		},
+		{
+			"label": "webapi-dev-stop",
+			"type": "shell",
+			"command": "./run.sh run::webapi:dev:stop",
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		}
+	]
+}

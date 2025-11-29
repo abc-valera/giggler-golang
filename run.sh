@@ -8,31 +8,29 @@
 [[ -f ./env/.env ]] && set -a && source ./env/.env && set +a
 
 run::webapi:dev() {
-	docker compose --profile dev up -d
-	sleep 2
-	air
+	docker compose -f compose.yaml -f compose.dev.yaml up --build
+}
+
+run::webapi:dev:stop() {
+	docker compose -f compose.yaml -f compose.dev.yaml stop
 }
 
 run::webapi:dev:down() {
 	echo_warning
-	docker compose --profile dev down -v
+	docker compose -f compose.yaml -f compose.dev.yaml down -v
 }
 
 run::webapi:release() {
-	docker compose --profile release up --build -d
+	docker compose -f compose.yaml -f compose.release.yaml up -d --build
 }
 
 run::webapi:release:logs() {
-	docker compose --profile release logs -f
+	docker compose -f compose.yaml -f compose.release.yaml logs -f
 }
 
 run::webapi:release:down() {
 	echo_warning
-	docker compose --profile release down -v
-}
-
-run::build() {
-	docker compose --profile release build
+	docker compose -f compose.yaml -f compose.release.yaml down -v
 }
 
 run::pprof:cpu() {
@@ -75,8 +73,6 @@ run::init-dev-tooling() {
 	# goimports
 
 	go mod download
-
-	npm install
 
 	echo "Pulling and building docker images 🐳 (It can take even more time.....)"
 

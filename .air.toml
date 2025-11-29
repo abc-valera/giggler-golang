@@ -9,7 +9,7 @@ tmp_dir = "./local/air"
 # -l   disables inlining optimisation where small functions are expanded in place to reduce overhead of function calls, making it easier for debugging
 cmd = 'CGO_ENABLED=0 go build -gcflags=all="-N -l" -o ./local/bin/webapi ./src/cmd/webapi'
 # Binary file yields from `cmd`.
-full_bin = "dlv exec ./local/bin/webapi --listen=127.0.0.1:2345 --headless=true --api-version=2 --accept-multiclient --continue --log --"
+full_bin = "dlv exec --continue --accept-multiclient --listen=:2345 --headless=true --api-version=2 --log --log-output=rpc ./local/bin/webapi"
 # Watch these directories if you specified.
 include_dir = ["src"]
 # It's not necessary to trigger build each time file changes if it's too frequent.

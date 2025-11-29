@@ -1,0 +1,22 @@
+name: giggler-golang-dev
+services:
+  db:
+    volumes:
+      # TODO: define a named dev-db volume
+      - /var/lib/postgresql
+    ports:
+      - "5432:5432"
+  webapi:
+    build:
+      context: .
+      dockerfile: ./src/cmd/webapi/Dockerfile.dev
+      args:
+        WORKDIR_PATH: ${PWD}
+    ports:
+      - "2345:2345" # Delve debugger port
+    volumes:
+      # TODO: define a named dev-webapi volume
+      - ${PWD}/local:${PWD}/local
+      # NOTE: mount Golang cache directories to speed up Air builds
+      - ${HOME}/go/pkg/mod:/root/go/pkg/mod
+      - ${HOME}/.cache/go-build:/root/.cache/go-build
