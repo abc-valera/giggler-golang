@@ -25,7 +25,10 @@ func Register(ctx context.Context, req RegisterIn) error {
 	ctx, span := otel.Trace(ctx)
 	defer span.End()
 
-	txFunc := func(tx *gorm.DB) error {
+	// NOTE: the variable is called `data` here to shadow the global
+	// gorm instance from the `data` package.
+	// This is to avoid accidental usage of the global instance
+	txFunc := func(data *gorm.DB) error {
 		hash, err := userPassword.Hash(ctx, req.Password)
 		if err != nil {
 			return err
@@ -38,7 +41,7 @@ func Register(ctx context.Context, req RegisterIn) error {
 			HashedPassword: hash,
 		}
 
-		if res := data.GetDb().WithContext(ctx).Create(user); res != nil {
+		if res := data.WithContext(ctx).Create(user); res != nil {
 			return dbDto.CommandError(res)
 		}
 
@@ -52,6 +55,7 @@ func Register(ctx context.Context, req RegisterIn) error {
 	if err := data.GetDb().WithContext(ctx).Transaction(txFunc); err != nil {
 		// TODO: make sure process this error properly
 		// TODO: maybe make gorm errors to be domain errors
+		// TODO: check if the txFunc panics, then everything is rolled back automatically
 		return fmt.Errorf("failed to register user: %w", err)
 	}
 
