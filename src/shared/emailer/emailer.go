@@ -19,8 +19,8 @@ type emailer interface {
 }
 
 type EmailSendIn struct {
+	To          []string
 	Subject     string
 	Content     string
-	To          []string
 	AttachFiles []string
 }
