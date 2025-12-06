@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"runtime/debug"
 
@@ -11,9 +10,6 @@ import (
 )
 
 func corsMiddleware(ctx huma.Context, next func(huma.Context)) {
-	// DEBUG:
-	fmt.Println("CORS")
-
 	ctx.SetHeader("Access-Control-Allow-Origin", "*")
 	ctx.SetHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 	ctx.SetHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
@@ -27,9 +23,6 @@ func corsMiddleware(ctx huma.Context, next func(huma.Context)) {
 }
 
 func recovererMiddleware(ctx huma.Context, next func(huma.Context)) {
-	// DEBUG:
-	fmt.Println("RECOVERER")
-
 	defer func() {
 		if err := recover(); err != nil {
 			ctx.SetStatus(http.StatusInternalServerError)

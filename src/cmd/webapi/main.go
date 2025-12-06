@@ -21,6 +21,7 @@ import (
 	"giggler-golang/src/shared/errutil/must"
 	"giggler-golang/src/shared/log"
 	"giggler-golang/src/shared/log/logView"
+	"giggler-golang/src/shared/public"
 )
 
 func main() {
@@ -41,7 +42,7 @@ func main() {
 		mux.HandleFunc("GET /debug/pprof/trace", pprof.Trace)
 	}
 
-	mux.HandleFunc("/build-version", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /build-version", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(buildVersion.Get()))
 	})
 
@@ -52,6 +53,17 @@ func main() {
 			Info: &huma.Info{
 				Title:   "giggler-golang Docs",
 				Version: "0.1.0",
+			},
+			// TODO: maybe apply conditionaly based on environment (dev/release)
+			Servers: []*huma.Server{
+				{
+					URL:         "http://localhost:" + must.GetEnv("WEBAPI_PORT"),
+					Description: "Local dev server",
+				},
+				{
+					URL:         public.Url.String(),
+					Description: "Public production server",
+				},
 			},
 			Components: &huma.Components{
 				Schemas: huma.NewMapRegistry("#/components/schemas/", huma.DefaultSchemaNamer),
@@ -69,7 +81,7 @@ func main() {
 			},
 		},
 		OpenAPIPath:   "/openapi",
-		DocsPath:      "/docs/",
+		DocsPath:      "/",
 		SchemasPath:   "/schemas",
 		Formats:       huma.DefaultFormats,
 		DefaultFormat: "application/json",
@@ -108,15 +120,14 @@ func main() {
 	}
 
 	go func() {
+		log.Info("HTTP server is running",
+			"port", "http://localhost"+server.Addr,
+			"build-version", buildVersion.Get(),
+		)
+
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			panic(err)
 		}
-
-		log.Info("HTTP server is running",
-			"HTTP server is running",
-			"port", server.Addr,
-			"build-version", buildVersion.Get(),
-		)
 	}()
 
 	// Stop program execution until receiving an interrupt signal

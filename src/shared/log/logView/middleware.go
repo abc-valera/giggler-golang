@@ -1,7 +1,6 @@
 package logView
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -10,9 +9,6 @@ import (
 )
 
 func ApplyLogMiddleware(ctx huma.Context, next func(huma.Context)) {
-	// DEBUG:
-	fmt.Println("LOG")
-
 	start := time.Now()
 
 	// Wrap the response writer so we can capture the status code and body
