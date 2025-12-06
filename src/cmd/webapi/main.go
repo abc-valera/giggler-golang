@@ -41,7 +41,7 @@ func main() {
 		mux.HandleFunc("GET /debug/pprof/trace", pprof.Trace)
 	}
 
-	mux.HandleFunc("/build-version", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /build-version", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(buildVersion.Get()))
 	})
 
@@ -69,7 +69,7 @@ func main() {
 			},
 		},
 		OpenAPIPath:   "/openapi",
-		DocsPath:      "/docs/",
+		DocsPath:      "/",
 		SchemasPath:   "/schemas",
 		Formats:       huma.DefaultFormats,
 		DefaultFormat: "application/json",
@@ -108,15 +108,14 @@ func main() {
 	}
 
 	go func() {
+		log.Info("HTTP server is running",
+			"port", "http://localhost"+server.Addr,
+			"build-version", buildVersion.Get(),
+		)
+
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			panic(err)
 		}
-
-		log.Info("HTTP server is running",
-			"HTTP server is running",
-			"port", server.Addr,
-			"build-version", buildVersion.Get(),
-		)
 	}()
 
 	// Stop program execution until receiving an interrupt signal

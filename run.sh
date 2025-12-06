@@ -21,11 +21,12 @@ run::webapi:dev:down() {
 }
 
 run::webapi:release() {
-	docker compose -f compose.yaml -f compose.release.yaml up -d --build
+	docker compose -f compose.yaml -f compose.release.yaml up --build
 }
 
-run::webapi:release:logs() {
-	docker compose -f compose.yaml -f compose.release.yaml logs -f
+run::webapi:release:stop() {
+	echo_warning
+	docker compose -f compose.yaml -f compose.release.yaml stop
 }
 
 run::webapi:release:down() {
