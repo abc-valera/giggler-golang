@@ -12,6 +12,8 @@ The project utilizes **feature-first** design, where features are first-class ci
 
 ## On the architecture
 
+The app uses a **code-first** approach for the documentation, api-spec, database management, etc. This approach was integrated where possible throught the codebase.
+
 TBD
 
 ## Local launch
