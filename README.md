@@ -32,3 +32,11 @@ go mod tidy
 ## Designs
 
 All the designs are available in [Figma](https://www.figma.com/design/sdu0PTLD3NOxOLNNI1S23f/)
+
+## On golang
+
+To create a new golang project run `go mod init <module path>`.
+
+Module path is a path that identifies a module and acts as a prefix for package import paths within the module. For example, "giggler-golang", as in the current project.
+
+A simple project can be started with `go run main.go`. Or `go run .` to run all files that are part of the main package in the current directory.
