@@ -35,6 +35,8 @@ All the designs are available in [Figma](https://www.figma.com/design/sdu0PTLD3N
 
 ## On golang
 
+### Project initialization
+
 To create a new golang project run `go mod init <module path>`.
 
 Module path is a path that identifies a module and acts as a prefix for package import paths within the module. For example, "giggler-golang", as in the current project.
@@ -49,4 +51,4 @@ The goal is to avoid unnecessary stuttering; this would be things like `foo.NewF
 
 One more example is the standard library's `html/template`, which defines a type (`template.Template`) and a constructor (`template.New`).
 
-
+### Static vs Dynamic Dispatch
