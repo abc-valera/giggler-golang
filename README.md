@@ -40,3 +40,13 @@ To create a new golang project run `go mod init <module path>`.
 Module path is a path that identifies a module and acts as a prefix for package import paths within the module. For example, "giggler-golang", as in the current project.
 
 A simple project can be started with `go run main.go`. Or `go run .` to run all files that are part of the main package in the current directory.
+
+### On sluttering in the naming
+
+Stuttering type names are generally fine - it's not unusual to have a `foo.Foo`. At the same time this can be named similar to `Interface` like `sort.Interface`. The second option is prefered, but depends on the context. 
+
+The goal is to avoid unnecessary stuttering; this would be things like `foo.NewFoo` when simply `foo.New` is sufficiently precise, or `foo.FooBar` and `foo.FooBaz` where `foo.Bar` and `foo.Baz` would work just as well.
+
+One more example is the standard library's `html/template`, which defines a type (`template.Template`) and a constructor (`template.New`).
+
+
