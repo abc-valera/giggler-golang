@@ -11,17 +11,18 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humago"
-
+	"giggler-golang/src/core/address"
+	"giggler-golang/src/core/buildVersion"
+	"giggler-golang/src/core/must"
 	"giggler-golang/src/features/example"
-	"giggler-golang/src/features/user/userLevel"
+	"giggler-golang/src/features/joke/jokeData"
+	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/features/user/userUsecase"
 	"giggler-golang/src/features/user/userViewWebapi"
-	"giggler-golang/src/shared/buildVersion"
-	"giggler-golang/src/shared/errutil/must"
-	"giggler-golang/src/shared/log"
-	"giggler-golang/src/shared/log/logView"
-	"giggler-golang/src/shared/public"
+	"giggler-golang/src/infra/db"
+	"giggler-golang/src/infra/emailer"
+	"giggler-golang/src/infra/logger"
+	"giggler-golang/src/infra/logger/loggerWebapi"
 )
 
 func main() {
@@ -31,9 +32,37 @@ func main() {
 		runtime.SetBlockProfileRate(1)
 	}
 
-	// Create a default ServeMux first, these routes won't be shown in the generated API docs
-	mux := http.NewServeMux()
+	buildVersionString := buildVersion.InitBuildVersion()
 
+	urls := address.InitURLs()
+
+	// Init infrastructure
+	dbConn := db.InitPostgresConnection()
+	dbConn.AutoMigrate(&userData.User{}, &jokeData.Joke{})
+
+	var emailerInstance emailer.Interface
+	switch must.GetEnv("EMAILER") {
+	case "dummy":
+		emailerInstance = emailer.InitDummy()
+	default:
+		panic(must.ErrInvalidEnvValue)
+	}
+
+	var loggerInstance logger.Interface
+	switch must.GetEnv("LOGGER") {
+	case "stdout":
+		loggerInstance = logger.InitSlog()
+	case "nop":
+		loggerInstance = logger.InitNoop()
+	default:
+		panic(must.ErrInvalidEnvValue)
+	}
+
+	// Init usecases
+	userUsecase := userUsecase.New(dbConn, emailerInstance)
+
+	// Init undocumented APIs
+	mux := http.NewServeMux()
 	if must.GetEnvBool("IS_HTTP_PPROF_INTERFACE_ENABLED") {
 		mux.HandleFunc("GET /debug/pprof/", pprof.Index)
 		mux.HandleFunc("GET /debug/pprof/cmdline", pprof.Cmdline)
@@ -41,77 +70,19 @@ func main() {
 		mux.HandleFunc("GET /debug/pprof/symbol", pprof.Symbol)
 		mux.HandleFunc("GET /debug/pprof/trace", pprof.Trace)
 	}
+	buildVersion.InitWebapiHandler(mux, buildVersionString)
 
-	mux.HandleFunc("GET /build-version", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(buildVersion.Get()))
-	})
-
-	// Create Huma http server configuration
-	humaConfig := huma.Config{
-		OpenAPI: &huma.OpenAPI{
-			OpenAPI: "3.1.0",
-			Info: &huma.Info{
-				Title:   "giggler-golang Docs",
-				Version: "0.1.0",
-			},
-			// TODO: maybe apply conditionaly based on environment (dev/release)
-			Servers: []*huma.Server{
-				{
-					URL:         "http://localhost:" + must.GetEnv("WEBAPI_PORT"),
-					Description: "Local dev server",
-				},
-				{
-					URL:         public.Url.String(),
-					Description: "Public production server",
-				},
-			},
-			Components: &huma.Components{
-				Schemas: huma.NewMapRegistry("#/components/schemas/", huma.DefaultSchemaNamer),
-				// Note, that the security schemas are defined only for documentation purposes.
-				SecuritySchemes: map[string]*huma.SecurityScheme{
-					string(userLevel.Basic): {
-						Type:         "apiKey",
-						Description:  "JWT token for authentication",
-						In:           "header",
-						Name:         "Authorization",
-						Scheme:       "bearer",
-						BearerFormat: "JWT",
-					},
-				},
-			},
-		},
-		OpenAPIPath:   "/openapi",
-		DocsPath:      "/",
-		SchemasPath:   "/schemas",
-		Formats:       huma.DefaultFormats,
-		DefaultFormat: "application/json",
-		CreateHooks: []func(huma.Config) huma.Config{
-			func(c huma.Config) huma.Config {
-				// Add a link transformer to the API. This adds `Link` headers and
-				// puts `$schema` fields in the response body which point to the JSON
-				// Schema that describes the response structure.
-				// This is a create hook so we get the latest schema path setting.
-				linkTransformer := huma.NewSchemaLinkTransformer("#/components/schemas/", c.SchemasPath)
-				c.OnAddOperation = append(c.OnAddOperation, linkTransformer.OnAddOperation)
-				c.Transformers = append(c.Transformers, linkTransformer.Transform)
-				return c
-			},
-		},
-	}
-
-	humaApi := humago.New(mux, humaConfig)
-
-	// Set middlewares
-	// TODO: check middlewares order
-	humaApi.UseMiddleware(
-		recovererMiddleware,
+	// Init documented APIs
+	humaApi := initHuma(mux, urls)
+	humaApi.UseMiddleware( // TODO: check middlewares order
+		loggerWebapi.InitRecovererMiddleware(loggerInstance),
 		corsMiddleware,
-		logView.ApplyLogMiddleware,
+		loggerWebapi.InitLoggerMiddleware(loggerInstance),
 	)
 
-	// Register features
+	// Init handlers
 	example.ApplyRoutes(humaApi)
-	userViewWebapi.ApplyRoutes(humaApi)
+	userViewWebapi.InitRoutes(humaApi, userUsecase)
 
 	// Create a default HTTP server
 	server := &http.Server{
@@ -120,9 +91,10 @@ func main() {
 	}
 
 	go func() {
-		log.Info("HTTP server is running",
-			"port", "http://localhost"+server.Addr,
-			"build-version", buildVersion.Get(),
+		loggerInstance.Info("HTTP server is running",
+			"build-version", buildVersionString,
+			"local", urls.Local.String(),
+			"origin", urls.Origin.String(),
 		)
 
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -135,7 +107,7 @@ func main() {
 	signal.Notify(gracefulShutdown, os.Interrupt)
 	<-gracefulShutdown
 
-	log.Info("received interrupt signal, shutting down...")
+	loggerInstance.Info("received interrupt signal, shutting down...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -144,5 +116,5 @@ func main() {
 		panic(err)
 	}
 
-	log.Info("server gracefully stopped")
+	loggerInstance.Info("server gracefully stopped")
 }

@@ -4,16 +4,21 @@ import (
 	"reflect"
 	"time"
 
-	"giggler-golang/src/shared/data"
-	"giggler-golang/src/shared/validate"
+	"giggler-golang/src/core/validate"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func init() {
-	data.GetDb().AutoMigrate(&User{})
-}
+// TODO: Add a Premium level for users with paid subscriptions
+// TODO: Add a validation for this
+
+const (
+	Unknown Level = "unknown"
+	Basic   Level = "basic"
+)
+
+type Level string
 
 // TODO: check if 'required' keyword is needed here
 // (I suppose it can be enabled by default)

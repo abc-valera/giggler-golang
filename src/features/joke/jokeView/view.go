@@ -4,11 +4,11 @@ package jokeView
 // 	"context"
 
 // 	"giggler-golang/src/features/joke/jokeData/jokeRepo"
-// 	"giggler-golang/src/shared/contexts"
-// 	"giggler-golang/src/shared/data"
-// 	"giggler-golang/src/shared/otel"
-// 	"giggler-golang/src/shared/view/viewDTO"
-// 	"giggler-golang/src/shared/view/viewgen"
+// 	"giggler-golang/src/core/contexts"
+// 	"giggler-golang/src/core/data"
+// 	"giggler-golang/src/core/otel"
+// 	"giggler-golang/src/core/view/viewDTO"
+// 	"giggler-golang/src/core/view/viewgen"
 // )
 
 // type Handler struct{}

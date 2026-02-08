@@ -2,8 +2,8 @@ package jokeView
 
 // import (
 // 	"giggler-golang/src/features/joke/jokeData"
-// 	"giggler-golang/src/shared/view/viewDTO"
-// 	"giggler-golang/src/shared/view/viewgen"
+// 	"giggler-golang/src/core/view/viewDTO"
+// 	"giggler-golang/src/core/view/viewgen"
 // )
 
 // func NewJokeModel(joke *jokeData.Joke) *viewgen.JokeSchema {

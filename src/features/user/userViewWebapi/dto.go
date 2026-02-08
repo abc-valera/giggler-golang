@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserModel struct {
+type Model struct {
 	ID        uuid.UUID
 	Username  string
 	Email     string
@@ -17,8 +17,8 @@ type UserModel struct {
 	CreatedAt time.Time
 }
 
-func NewUserDTO(user *userData.User) *UserModel {
-	return &UserModel{
+func NewModel(user *userData.User) *Model {
+	return &Model{
 		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,

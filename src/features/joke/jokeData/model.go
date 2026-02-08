@@ -4,16 +4,11 @@ import (
 	"reflect"
 	"time"
 
-	"giggler-golang/src/shared/data"
-	"giggler-golang/src/shared/validate"
+	"giggler-golang/src/core/validate"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
-
-func init() {
-	data.GetDb().AutoMigrate(&Joke{})
-}
 
 type Joke struct {
 	ID          uuid.UUID

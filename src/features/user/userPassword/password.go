@@ -11,14 +11,12 @@ import (
 
 	"golang.org/x/crypto/argon2"
 
-	"giggler-golang/src/shared/errutil"
-	"giggler-golang/src/shared/otel"
-	"giggler-golang/src/shared/validate"
+	"giggler-golang/src/core/errutil"
+	"giggler-golang/src/core/validate"
 )
 
 var ErrInvalidPass = errutil.NewCode(errutil.CodeInvalidArgument, errors.New("invalid password"))
 
-// TODO: move this to env file
 const (
 	hashMemory      uint32 = 64 * 1024
 	hashIterations  uint32 = 3
@@ -28,9 +26,6 @@ const (
 )
 
 func Hash(ctx context.Context, password string) (string, error) {
-	_, span := otel.Trace(ctx)
-	defer span.End()
-
 	if err := validate.Var(password, "required,min=2,max=32"); err != nil {
 		return "", ErrInvalidPass
 	}
@@ -54,9 +49,6 @@ func Hash(ctx context.Context, password string) (string, error) {
 
 // IsReal returns true if the password matches provided hash.
 func IsReal(ctx context.Context, pass, hashedPass string) bool {
-	_, span := otel.Trace(ctx)
-	defer span.End()
-
 	// Extract the parameters, salt and derived key from the encoded password hash.
 	salt, hash, err := hashDecode(hashedPass)
 	if err != nil {
