@@ -23,7 +23,7 @@ func InitRoutes(api huma.API, usecase userUsecase.Usecase) {
 		Path:        "/profile",
 		Middlewares: huma.Middlewares{authMiddleware},
 		Security: []map[string][]string{
-			{string(userData.Basic): {}},
+			{string(userData.LevelBasic): {}},
 		},
 	}, h.profileHandler)
 }

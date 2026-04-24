@@ -15,7 +15,7 @@ services:
         GOCACHE: ${HOME}/.cache/go-build
     volumes:
       # TODO: define a release-webapi volume
-      - ${PWD}/local:${PWD}/local
+      - ${PWD}/output:${PWD}/output
     restart: always
   grafana:
     restart: always

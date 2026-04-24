@@ -8,13 +8,13 @@ import (
 
 type URLs struct {
 	Local *url.URL
-	// Origin is the URL of the webapp's public server
-	Origin *url.URL
+	// Public is the URL of the webapp's public server
+	Public *url.URL
 }
 
 func InitURLs() URLs {
 	return URLs{
 		Local:  must.ParseUrl("http://localhost:" + must.GetEnv("WEBAPI_PORT")),
-		Origin: must.ParseUrl(must.GetEnv("ORIGIN_URL")),
+		Public: must.ParseUrl(must.GetEnv("ORIGIN_URL")),
 	}
 }

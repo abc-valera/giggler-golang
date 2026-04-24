@@ -7,31 +7,16 @@ require (
 	github.com/go-playground/validator/v10 v10.28.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
-	go.opentelemetry.io/otel v1.38.0
-	go.opentelemetry.io/otel/exporters/stdout/stdoutlog v0.14.0
-	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.38.0
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.38.0
-	go.opentelemetry.io/otel/log v0.14.0
-	go.opentelemetry.io/otel/metric v1.38.0
-	go.opentelemetry.io/otel/sdk v1.38.0
-	go.opentelemetry.io/otel/sdk/log v0.14.0
-	go.opentelemetry.io/otel/sdk/metric v1.38.0
-	go.opentelemetry.io/otel/trace v1.38.0
 	golang.org/x/crypto v0.45.0
+	gorm.io/cli/gorm v0.2.4
 	gorm.io/driver/postgres v1.6.0
-	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.31.1
-	gorm.io/plugin/dbresolver v1.6.2
 )
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.11 // indirect
-	github.com/go-logr/logr v1.4.3 // indirect
-	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgx/v5 v5.7.6 // indirect
@@ -39,14 +24,11 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/mattn/go-sqlite3 v1.14.32 // indirect
-	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	golang.org/x/mod v0.30.0 // indirect
+	github.com/stretchr/testify v1.11.1 // indirect
+	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3 // indirect
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
-	golang.org/x/tools v0.39.0 // indirect
-	gorm.io/datatypes v1.2.7 // indirect
-	gorm.io/driver/mysql v1.6.0 // indirect
-	gorm.io/hints v1.1.2 // indirect
 )
+
+replace gorm.io/cli/gorm => ./cli

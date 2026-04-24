@@ -26,7 +26,7 @@ func initHuma(mux *http.ServeMux, urls address.URLs) huma.API {
 					Description: "Local dev server",
 				},
 				{
-					URL:         urls.Origin.String(),
+					URL:         urls.Public.String(),
 					Description: "Public production server",
 				},
 			},
@@ -34,7 +34,7 @@ func initHuma(mux *http.ServeMux, urls address.URLs) huma.API {
 				Schemas: huma.NewMapRegistry("#/components/schemas/", huma.DefaultSchemaNamer),
 				// Note, that the security schemas are defined only for documentation purposes.
 				SecuritySchemes: map[string]*huma.SecurityScheme{
-					string(userData.Basic): {
+					string(userData.LevelBasic): {
 						Type:         "apiKey",
 						Description:  "JWT token for authentication",
 						In:           "header",

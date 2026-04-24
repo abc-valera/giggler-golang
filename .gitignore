@@ -3,8 +3,8 @@
 !example.env
 
 # Local cache/infrastructure files
-local/*
-!local/.gitkeep
+output/*
+!output/.gitkeep
 
 # Node dependencies
 node_modules

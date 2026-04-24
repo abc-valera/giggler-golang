@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"gorm.io/cli/gorm/typed"
 	"gorm.io/gorm"
 
 	"giggler-golang/src/core/must"
@@ -12,7 +13,6 @@ import (
 	"giggler-golang/src/features/user/userData"
 	"giggler-golang/src/features/user/userPassword"
 	"giggler-golang/src/infra/db/dbDto"
-	"giggler-golang/src/infra/db/gormgenQuery"
 	"giggler-golang/src/infra/emailer"
 )
 
@@ -75,14 +75,16 @@ type LoginIn struct {
 }
 
 type LoginOut struct {
-	User         *userData.User
+	User         userData.User
 	AccessToken  string
 	RefreshToken string
 }
 
 func (u Usecase) Login(ctx context.Context, req LoginIn) (LoginOut, error) {
-	q := gormgenQuery.Use(u.db)
-	foundUser, err := q.WithContext(ctx).User.Where(q.User.Email.Eq(req.Email)).First()
+	// Use field helpers for type-safe query
+	foundUser, err := typed.G[userData.User](u.db).
+		Where(userData.UserHelper.Email.Eq(req.Email)).
+		Take(ctx)
 	if err != nil {
 		return LoginOut{}, err
 	}
@@ -113,13 +115,12 @@ func (u Usecase) Refresh(ctx context.Context, refreshToken string) (string, erro
 	}), nil
 }
 
-func (u Usecase) Profile(ctx context.Context) (*userData.User, error) {
+func (u Usecase) Profile(ctx context.Context) (userData.User, error) {
 	p := jwt.Get(ctx)
 
-	q := gormgenQuery.Use(u.db)
-	user, err := q.WithContext(ctx).User.Where(q.User.ID.Eq(p.UserID)).First()
+	user, err := typed.G[userData.User](u.db).Where(userData.UserHelper.ID.Eq(p.UserID)).First(ctx)
 	if err != nil {
-		return nil, err
+		return userData.User{}, err
 	}
 
 	return user, nil

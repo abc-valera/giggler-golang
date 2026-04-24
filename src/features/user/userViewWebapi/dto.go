@@ -17,7 +17,7 @@ type Model struct {
 	CreatedAt time.Time
 }
 
-func NewModel(user *userData.User) *Model {
+func NewModel(user userData.User) *Model {
 	return &Model{
 		ID:        user.ID,
 		Username:  user.Username,

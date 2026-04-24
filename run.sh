@@ -43,7 +43,7 @@ run::pprof:heap() {
 }
 
 run::pprof:heap:collect() {
-	curl "$URL/debug/pprof/heap?gc=1" >"local/pprof/heap.$(date "+%y-%m-%d--%H-%M-%S")"
+	curl "$URL/debug/pprof/heap?gc=1" >"output/pprof/heap.$(date "+%y-%m-%d--%H-%M-%S")"
 }
 
 run::pprof:heap:diff() {
@@ -59,7 +59,8 @@ run::pprof:goroutine() {
 }
 
 run::gorm:generate() {
-	go run ./src/cmd/gormgen
+	# TODO: add gorm binary to the list of dependencies
+	gorm gen -i ./src/features
 }
 
 # TODO: adapt this to both classic/nixos/devcontainers setups

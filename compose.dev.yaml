@@ -16,7 +16,7 @@ services:
       - "2345:2345" # Delve debugger port
     volumes:
       # TODO: define a named dev-webapi volume
-      - ${PWD}/local:${PWD}/local
-      # NOTE: mount Golang cache directories to speed up Air builds
+      - ${PWD}/output:${PWD}/output
+      # Mount Golang cache directories to speed up Air builds
       - ${HOME}/go/pkg/mod:/root/go/pkg/mod
       - ${HOME}/.cache/go-build:/root/.cache/go-build

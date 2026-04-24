@@ -93,8 +93,8 @@ func main() {
 	go func() {
 		loggerInstance.Info("HTTP server is running",
 			"build-version", buildVersionString,
-			"local", urls.Local.String(),
-			"origin", urls.Origin.String(),
+			"local url:", urls.Local.String(),
+			"public url:", urls.Public.String(),
 		)
 
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {

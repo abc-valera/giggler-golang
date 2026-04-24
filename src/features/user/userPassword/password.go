@@ -15,7 +15,7 @@ import (
 	"giggler-golang/src/core/validate"
 )
 
-var ErrInvalidPass = errutil.NewCode(errutil.CodeInvalidArgument, errors.New("invalid password"))
+var ErrInvalidPass = errutil.WrapStr("provided invalid password", errutil.ErrorValidation)
 
 const (
 	hashMemory      uint32 = 64 * 1024
