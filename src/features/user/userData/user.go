@@ -23,7 +23,7 @@ const (
 // TODO: check if 'required' keyword is needed here
 // (I suppose it can be enabled by default)
 
-//go:generate gorm gen -i . --same-package=true --file-suffix=helper --struct-suffix=Helper
+//go:generate gorm gen -i . --is-same-package --same-package-suffix=helper
 type User struct {
 	ID             uuid.UUID
 	Username       string  `validate:"required,min=3,max=32" gorm:"unique;not null"`

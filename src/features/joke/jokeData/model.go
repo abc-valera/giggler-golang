@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate gorm gen -i . --is-same-package --same-package-suffix=helper
 type Joke struct {
 	ID          uuid.UUID
 	Title       string  `validate:"required,min=4,max=64" gorm:"not null;uniqueIndex:idx_user_id_joke_title"`
