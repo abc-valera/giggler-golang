@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+echo "[pre-commit] Running linters and formatters..."
+gofmt -w .
+goimports -w -local "giggler-golang" .
+echo "[pre-commit] Running go mod tidy..."
+go mod tidy
+echo "[pre-commit] Running go vet..."
+go vet ./...
+echo "[pre-commit] Staging linter changes..."
+git add -u
+echo "[pre-commit] Done."

@@ -3,35 +3,39 @@
 # run.sh is written using an eponymous pattern for organizing project’s CLI commands.
 # Read more: https://run.jotaen.net/
 
-# Load env from dotenv files
-[[ -f ./env/example.env ]] && set -a && source ./env/example.env && set +a
-[[ -f ./env/.env ]] && set -a && source ./env/.env && set +a
+# Load env
+set -a
+[[ -f ./secrets/local.env ]] && source ./secrets/local.env
+set +a
+GOMODCACHE=$(go env GOMODCACHE) && export GOMODCACHE
+GOCACHE=$(go env GOCACHE) && export GOCACHE
+source ./scripts/export-build-version.bash && export-build-version
 
 run::webapi:dev() {
-	docker compose -f compose.yaml -f compose.dev.yaml up --build
+	docker compose -f infra/local/compose.yaml -f infra/local/compose.dev.yaml up --build
 }
 
 run::webapi:dev:stop() {
-	docker compose -f compose.yaml -f compose.dev.yaml stop
+	docker compose -f infra/local/compose.yaml -f infra/local/compose.dev.yaml stop
 }
 
 run::webapi:dev:down() {
 	echo_warning
-	docker compose -f compose.yaml -f compose.dev.yaml down -v
+	docker compose -f infra/local/compose.yaml -f infra/local/compose.dev.yaml down -v
 }
 
 run::webapi:release() {
-	docker compose -f compose.yaml -f compose.release.yaml up --build
+	docker compose -f infra/local/compose.yaml -f infra/local/compose.release.yaml up --build
 }
 
 run::webapi:release:stop() {
 	echo_warning
-	docker compose -f compose.yaml -f compose.release.yaml stop
+	docker compose -f infra/local/compose.yaml -f infra/local/compose.release.yaml stop
 }
 
 run::webapi:release:down() {
 	echo_warning
-	docker compose -f compose.yaml -f compose.release.yaml down -v
+	docker compose -f infra/local/compose.yaml -f infra/local/compose.release.yaml down -v
 }
 
 run::pprof:cpu() {
@@ -43,7 +47,7 @@ run::pprof:heap() {
 }
 
 run::pprof:heap:collect() {
-	curl "$URL/debug/pprof/heap?gc=1" >"output/pprof/heap.$(date "+%y-%m-%d--%H-%M-%S")"
+	curl "$URL/debug/pprof/heap?gc=1" >"var/pprof/heap.$(date "+%y-%m-%d--%H-%M-%S")"
 }
 
 run::pprof:heap:diff() {
@@ -61,30 +65,6 @@ run::pprof:goroutine() {
 run::gorm:generate() {
 	# TODO: add gorm binary to the list of dependencies
 	gorm gen -i ./src/features
-}
-
-# TODO: adapt this to both classic/nixos/devcontainers setups
-run::init-dev-tooling() {
-	echo "Downloading tools and dependencies 📦 (It can take some time...)"
-
-	go install mvdan.cc/gofumpt@latest
-	go install github.com/air-verse/air@latest
-	go install github.com/go-delve/delve/cmd/dlv@latest
-	# gopls
-	# staticcheck
-	# goimports
-
-	go mod download
-
-	echo "Pulling and building docker images 🐳 (It can take even more time.....)"
-
-	# TODO: pull the images instead
-	run::webapi:release
-
-	# Create a default .env file
-	cp ./env/example.env ./env/.env
-
-	echo "Project initialized 🚀"
 }
 
 echo_warning() {

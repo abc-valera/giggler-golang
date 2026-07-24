@@ -7,7 +7,7 @@
 	"todo-tree.tree.flat": true,
 
 	// Golang settings
-	"go.testEnvFile": "${workspaceFolder}/env/.test.env",
+	"go.testEnvFile": "${workspaceFolder}/secrets/test.env",
 	"go.testFlags": ["-count=1"],
 	"go.testTimeout": "5s",
 	"go.useLanguageServer": true,

@@ -1,32 +1,39 @@
-FROM golang:1.25.4-alpine3.22 AS builder
+FROM golang:1.26-alpine AS builder
 
 RUN apk --no-cache add curl
 
 ARG WORKDIR_PATH
+WORKDIR ${WORKDIR_PATH}
+
+ARG GIGGLER_GOLANG_VERSION
+
 ARG GOMODCACHE
 ARG GOCACHE
 
-WORKDIR ${WORKDIR_PATH}
-
-COPY ./src ./src
 COPY go.* .
-
+# The buildtime cache mount
 RUN --mount=type=cache,target=${GOMODCACHE} \
 	go mod download
 
+COPY ./src ./src
+
+# The buildtime cache mount
 RUN --mount=type=cache,target=${GOMODCACHE} \
 	--mount=type=cache,target=${GOCACHE} \
-	go build -o /usr/bin/giggler-golang-webapi ./src/cmd/webapi
+	go build \
+	-ldflags "-X giggler-golang/src/shared/version.Version=${GIGGLER_GOLANG_VERSION}" \
+	-o /usr/local/bin/giggler-golang-webapi-${GIGGLER_GOLANG_VERSION} ./src/cmd/webapi
 
-FROM alpine:3.22 AS runner
+FROM alpine AS runner
 
 RUN apk --no-cache add curl
 
-# Variables that should be provided by the user
 ARG WORKDIR_PATH
-
 WORKDIR ${WORKDIR_PATH}
 
-COPY --from=builder /usr/bin/giggler-golang-webapi .
+ARG GIGGLER_GOLANG_VERSION
+ENV GIGGLER_GOLANG_VERSION=${GIGGLER_GOLANG_VERSION}
 
-CMD ["./giggler-golang-webapi"]
+COPY --from=builder /usr/local/bin/giggler-golang-webapi-${GIGGLER_GOLANG_VERSION} /usr/local/bin/giggler-golang-webapi-${GIGGLER_GOLANG_VERSION}
+
+CMD ["sh", "-c", "exec /usr/local/bin/giggler-golang-webapi-${GIGGLER_GOLANG_VERSION}"]
