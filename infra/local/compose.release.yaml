@@ -1,0 +1,10 @@
+name: giggler-golang-release
+services:
+  webapi:
+    build:
+      context: ../..
+      dockerfile: ./src/cmd/webapi/Dockerfile.release
+      args:
+        # Initialize Golang cache folders to speedup the build
+        GOMODCACHE: $GOMODCACHE
+        GOCACHE: $GOCACHE

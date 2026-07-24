@@ -1,16 +1,24 @@
-FROM golang:1.25.4-alpine3.22 AS builder
+FROM golang:1.26-alpine AS builder
 
 ARG WORKDIR_PATH
 WORKDIR ${WORKDIR_PATH}
 
-RUN apk --no-cache add curl
+ARG GIGGLER_GOLANG_VERSION
+ENV GIGGLER_GOLANG_VERSION=${GIGGLER_GOLANG_VERSION}
+
+ENV GOMODCACHE="/root/go/pkg/mod"
+ENV GOCACHE="/root/.cache/go-build"
+
+RUN apk --no-cache add curl bash
 RUN go install github.com/air-verse/air@latest
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
-COPY ./src ./src
 COPY go.* .
-COPY  .air.toml .
+# The buildtime cache mount
+RUN --mount=type=cache,target=${GOMODCACHE} \
+    go mod download
 
-RUN go mod download
+COPY ./infra/local/.air.toml .
+COPY ./src ./src
 
-CMD ["air"]
+CMD ["air", "-c", ".air.toml"]

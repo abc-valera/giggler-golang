@@ -1,10 +1,11 @@
-# Env files
-*.env
-!example.env
+/secrets
 
 # Local cache/infrastructure files
-output/*
-!output/.gitkeep
+/var/*
+!/var/.gitkeep
+
+# Build output
+/build/
 
 # Node dependencies
 node_modules

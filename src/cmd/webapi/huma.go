@@ -3,8 +3,7 @@ package main
 import (
 	"net/http"
 
-	"giggler-golang/src/core/address"
-	"giggler-golang/src/features/user/userData"
+	"giggler-golang/src/shared/address"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humago"
@@ -22,27 +21,16 @@ func initHuma(mux *http.ServeMux, urls address.URLs) huma.API {
 			// TODO: maybe apply conditionaly based on environment (dev/release)
 			Servers: []*huma.Server{
 				{
-					URL:         urls.Local.String(),
+					URL:         urls.Localhost.String(),
 					Description: "Local dev server",
 				},
 				{
-					URL:         urls.Public.String(),
+					URL:         urls.Origin.String(),
 					Description: "Public production server",
 				},
 			},
 			Components: &huma.Components{
 				Schemas: huma.NewMapRegistry("#/components/schemas/", huma.DefaultSchemaNamer),
-				// Note, that the security schemas are defined only for documentation purposes.
-				SecuritySchemes: map[string]*huma.SecurityScheme{
-					string(userData.LevelBasic): {
-						Type:         "apiKey",
-						Description:  "JWT token for authentication",
-						In:           "header",
-						Name:         "Authorization",
-						Scheme:       "bearer",
-						BearerFormat: "JWT",
-					},
-				},
 			},
 		},
 		OpenAPIPath:   "/openapi",

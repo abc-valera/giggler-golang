@@ -11,37 +11,32 @@ import (
 	"runtime"
 	"time"
 
-	"giggler-golang/src/core/address"
-	"giggler-golang/src/core/buildVersion"
-	"giggler-golang/src/core/must"
-	"giggler-golang/src/features/example"
-	"giggler-golang/src/features/joke/jokeData"
-	"giggler-golang/src/features/user/userData"
-	"giggler-golang/src/features/user/userUsecase"
-	"giggler-golang/src/features/user/userViewWebapi"
-	"giggler-golang/src/infra/db"
-	"giggler-golang/src/infra/emailer"
-	"giggler-golang/src/infra/logger"
-	"giggler-golang/src/infra/logger/loggerWebapi"
+	"giggler-golang/src/features/identity"
+	"giggler-golang/src/features/joke"
+	"giggler-golang/src/shared/address"
+	"giggler-golang/src/shared/db"
+	"giggler-golang/src/shared/emailer"
+	"giggler-golang/src/shared/logger"
+	"giggler-golang/src/shared/logger/loggerWebapi"
+	"giggler-golang/src/shared/must"
+	"giggler-golang/src/shared/version"
 )
 
 func main() {
 	// Set global configurations here
-	if must.GetEnvBool("IS_MUTEX_BLOCK_PPROF_ENABLED") {
+	if must.GetEnvBool("GIGGLER_IS_MUTEX_BLOCK_PPROF_ENABLED") {
 		runtime.SetMutexProfileFraction(1)
 		runtime.SetBlockProfileRate(1)
 	}
-
-	buildVersionString := buildVersion.InitBuildVersion()
 
 	urls := address.InitURLs()
 
 	// Init infrastructure
 	dbConn := db.InitPostgresConnection()
-	dbConn.AutoMigrate(&userData.User{}, &jokeData.Joke{})
+	dbConn.AutoMigrate(&identity.User{}, &joke.Joke{})
 
 	var emailerInstance emailer.Interface
-	switch must.GetEnv("EMAILER") {
+	switch must.GetEnv("GIGGLER_EMAILER") {
 	case "dummy":
 		emailerInstance = emailer.InitDummy()
 	default:
@@ -49,7 +44,7 @@ func main() {
 	}
 
 	var loggerInstance logger.Interface
-	switch must.GetEnv("LOGGER") {
+	switch must.GetEnv("GIGGLER_LOGGER") {
 	case "stdout":
 		loggerInstance = logger.InitSlog()
 	case "nop":
@@ -58,19 +53,20 @@ func main() {
 		panic(must.ErrInvalidEnvValue)
 	}
 
-	// Init usecases
-	userUsecase := userUsecase.New(dbConn, emailerInstance)
+	// Init services and usecases
+	identityUsecase := identity.NewUsecase(dbConn, emailerInstance)
+	jokeUsecase := joke.NewUsecase(dbConn)
 
 	// Init undocumented APIs
 	mux := http.NewServeMux()
-	if must.GetEnvBool("IS_HTTP_PPROF_INTERFACE_ENABLED") {
+	if must.GetEnvBool("GIGGLER_IS_HTTP_PPROF_INTERFACE_ENABLED") {
 		mux.HandleFunc("GET /debug/pprof/", pprof.Index)
 		mux.HandleFunc("GET /debug/pprof/cmdline", pprof.Cmdline)
 		mux.HandleFunc("GET /debug/pprof/profile", pprof.Profile)
 		mux.HandleFunc("GET /debug/pprof/symbol", pprof.Symbol)
 		mux.HandleFunc("GET /debug/pprof/trace", pprof.Trace)
 	}
-	buildVersion.InitWebapiHandler(mux, buildVersionString)
+	version.InitWebapiHandler(mux)
 
 	// Init documented APIs
 	humaApi := initHuma(mux, urls)
@@ -81,20 +77,21 @@ func main() {
 	)
 
 	// Init handlers
-	example.ApplyRoutes(humaApi)
-	userViewWebapi.InitRoutes(humaApi, userUsecase)
+	identityHandler := identity.InitHandler(humaApi, identityUsecase)
+	joke.InitHandler(humaApi, jokeUsecase, identityHandler)
 
 	// Create a default HTTP server
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%s", must.GetEnv("WEBAPI_PORT")),
+		Addr:    fmt.Sprintf(":%s", must.GetEnv("GIGGLER_WEBAPI_PORT")),
 		Handler: humaApi.Adapter(),
 	}
 
 	go func() {
-		loggerInstance.Info("HTTP server is running",
-			"build-version", buildVersionString,
-			"local url:", urls.Local.String(),
-			"public url:", urls.Public.String(),
+		loggerInstance.Info(
+			"HTTP server is running",
+			"build-version", version.Version,
+			"local url:", urls.Localhost.String(),
+			"public url:", urls.Origin.String(),
 		)
 
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
