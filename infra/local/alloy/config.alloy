@@ -1,0 +1,42 @@
+discovery.docker "containers" {
+	host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "containers" {
+	targets = discovery.docker.containers.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+}
+
+loki.source.docker "containers" {
+	host             = "unix:///var/run/docker.sock"
+	targets          = discovery.relabel.containers.output
+	labels           = {}
+	relabel_rules    = discovery.relabel.containers.rules
+	forward_to       = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+	endpoint {
+		url = "http://loki:3100/loki/api/v1/push"
+	}
+}
+
+// Requires GIGGLER_IS_HTTP_PPROF_INTERFACE_ENABLED=true on webapi.
+pyroscope.scrape "webapi" {
+	targets = [{
+		"__address__" = "webapi:8080",
+		"service_name" = "webapi",
+	}]
+	forward_to = [pyroscope.write.local.receiver]
+}
+
+pyroscope.write "local" {
+	endpoint {
+		url = "http://pyroscope:4040"
+	}
+}

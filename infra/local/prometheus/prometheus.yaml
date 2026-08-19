@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: webapi
+    static_configs:
+      # NOTE: keep this port in sync with GIGGLER_WEBAPI_PORT (secrets/local.env), Prometheus config files don't support env var interpolation.
+      - targets: ["webapi:8080"]
